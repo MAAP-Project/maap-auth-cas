@@ -1,0 +1,161 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+        maven { url "https://repo.spring.io/libs-milestone" }
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath "de.undercouch:gradle-download-task:${project.gradleDownloadTaskVersion}"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${project.springBootVersion}"
+        classpath "gradle.plugin.com.google.cloud.tools:jib-gradle-plugin:${project.jibVersion}"
+        classpath "com.boazj.gradle:gradle-log-plugin:${project.gradleLogVersion}"
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+    maven { url "https://build.shibboleth.net/nexus/content/repositories/releases/" }
+    maven { url "https://repo.spring.io/milestone/" }
+    maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local" }
+}
+
+def casServerVersion = project.'cas.version'
+def casWebApplicationBinaryName = "cas.war"
+def pac4jVersion = project.'pac4jVersion'
+
+project.ext."casServerVersion" = casServerVersion
+project.ext."casWebApplicationBinaryName" = casWebApplicationBinaryName
+
+apply from: rootProject.file("gradle/waroverlay.gradle")
+apply from: rootProject.file("gradle/tasks.gradle")
+
+apply plugin: "war"
+apply plugin: "org.springframework.boot"
+apply plugin: "eclipse"
+apply plugin: "idea"
+apply plugin: "com.google.cloud.tools.jib"
+
+dependencies {
+    compile "org.apereo.cas:cas-server-webapp${project.appServer}:${casServerVersion}"
+    // Other CAS dependencies/modules may be listed here...
+    compile "org.apereo.cas:cas-server-support-pac4j-webflow:${casServerVersion}"
+    compile "org.apereo.cas:cas-server-support-oauth-webflow:${casServerVersion}"
+    compile "org.apereo.cas:cas-server-support-json-service-registry:${casServerVersion}"
+    compile "org.apereo.cas:cas-server-support-oidc:${casServerVersion}"
+    compile "org.projectlombok:lombok:1.18.8"
+    annotationProcessor "org.projectlombok:lombok:1.18.8"
+    compile "org.slf4j:slf4j-api:1.7.26"
+    compile "org.apereo.cas:cas-server-core-api-configuration-model:${casServerVersion}"
+    compile "org.apereo.cas:cas-server-support-pac4j-core-clients:${casServerVersion}"
+    compile "org.pac4j:pac4j-core:${pac4jVersion}"
+    compile "org.pac4j:pac4j-oauth:${pac4jVersion}"
+    compile "org.apereo.cas:cas-server-support-oauth:${casServerVersion}"
+    compile "org.pac4j:pac4j-oidc:${pac4jVersion}"
+    compile "org.apereo.cas:cas-server-core-authentication-attributes:${casServerVersion}"
+    compile "org.apereo.cas:cas-server-core-services-api:${casServerVersion}"
+}
+
+tasks.findByName("jibDockerBuild")
+    .dependsOn(copyWebAppIntoJib, copyConfigIntoJib)
+    .finalizedBy(deleteWebAppFromJib)
+
+configurations.all {
+    resolutionStrategy {
+        cacheChangingModulesFor 0, "seconds"
+        cacheDynamicVersionsFor 0, "seconds"
+
+        preferProjectModules()
+
+        def failIfConflict = project.hasProperty("failOnVersionConflict") && Boolean.valueOf(project.getProperty("failOnVersionConflict"))
+        if (failIfConflict) {
+            failOnVersionConflict()
+        }
+    }
+}
+
+eclipse {
+    classpath {
+       downloadSources = true
+       downloadJavadoc = true
+    }
+}
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+war {
+    includeWarJars = true
+    entryCompression = ZipEntryCompression.STORED
+}
+
+springBoot {
+    mainClassName = "org.apereo.cas.web.CasWebApplication"
+}
+
+bootWar {
+    doFirst {
+        def executable = project.hasProperty("executable") && Boolean.valueOf(project.getProperty("executable"))
+        if (executable) {
+            logger.info "Including launch script for executable WAR artifact"
+            launchScript()
+        } else {
+            logger.info "WAR artifact is not marked as an executable"
+        }
+        archiveName "${casWebApplicationBinaryName}"
+        baseName "cas"
+        excludeDevtools = true
+    }
+}
+
+bootRun {
+    sourceResources sourceSets.main
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+wrapper {
+    distributionType = Wrapper.DistributionType.BIN
+    gradleVersion = "${project.gradleVersion}"
+}
+
+jib {
+    from {
+        image = project.baseDockerImage
+    }
+    to {
+        image = "${project.group}/${project.name}"
+        /**
+         ecr-login: Amazon Elastic Container Registry (ECR)
+         gcr: Google Container Registry (GCR)
+         osxkeychain: Docker Hub
+         */
+        credHelper = "osxkeychain"
+        /**
+        auth {
+            username = "*******"
+            password = "*******"
+        }
+        tags = [casServerVersion]
+        */
+    }
+    container {
+        useCurrentTimestamp = true
+        entrypoint = ['docker/entrypoint.sh']
+        ports = ['80', '443', '8080', '8443']
+        labels = [version:casServerVersion, name:project.name, group:project.group]
+    }
+    extraDirectory {
+        path = file('src/main/jib')
+        permissions = [
+            '/docker/entrypoint.sh': '755'
+        ]
+    }
+}

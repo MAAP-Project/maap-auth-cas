@@ -30,13 +30,13 @@ public class MaapDelegatedClientFactory extends DelegatedClientFactory {
         if (urs4_key != null && urs4_secret != null && urs4_authurl != null && urs4_tokenurl != null) {
             val client = new Urs4Client(urs4_key, urs4_secret, urs4_authurl, urs4_tokenurl);
             client.setName("URS");
-            LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
+            //LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
             if (urs4_autoredirect != null) {
                 client.getCustomProperties().put("autoRedirect", Boolean.parseBoolean(urs4_autoredirect));
             }
         } else {
-            LOGGER.error("URS4 properties incomplete, not enabling URS4 authentication");
+            //LOGGER.error("URS4 properties incomplete, not enabling URS4 authentication");
         }
 
     }

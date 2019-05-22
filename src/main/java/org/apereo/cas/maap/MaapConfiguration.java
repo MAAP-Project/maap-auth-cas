@@ -9,7 +9,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.maap.oidc.OidcOAuth20AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.util.OAuth20Utils;
+//import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.pac4j.authentication.DelegatedClientFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.RestfulPersonAttributeDao;
@@ -51,7 +51,7 @@ public class MaapConfiguration {
     @RefreshScope
     public AuthenticationServiceSelectionStrategy oauth20AuthenticationRequestServiceSelectionStrategy() {
         return new OidcOAuth20AuthenticationRequestServiceSelectionStrategy(servicesManager.getIfAvailable(),
-                webApplicationServiceFactory, OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()));
+                webApplicationServiceFactory, casProperties.getServer().getPrefix().concat("/oauth2.0/callbackAuthorize"));
     }
 
     @Bean
@@ -70,12 +70,12 @@ public class MaapConfiguration {
                 if (StringUtils.isNotBlank(rest.getBasicAuthPassword()) && StringUtils.isNotBlank(rest.getBasicAuthUsername())) {
                     dao.setBasicAuthPassword(rest.getBasicAuthPassword());
                     dao.setBasicAuthUsername(rest.getBasicAuthUsername());
-                    LOGGER.debug("Basic authentication credentials are located for REST endpoint [{}]", rest.getUrl());
+                    //LOGGER.debug("Basic authentication credentials are located for REST endpoint [{}]", rest.getUrl());
                 } else {
-                    LOGGER.debug("Basic authentication credentials are not defined for REST endpoint [{}]", rest.getUrl());
+                    //LOGGER.debug("Basic authentication credentials are not defined for REST endpoint [{}]", rest.getUrl());
                 }
 
-                LOGGER.debug("Configured REST attribute sources from [{}]", rest.getUrl());
+                //LOGGER.debug("Configured REST attribute sources from [{}]", rest.getUrl());
                 list.add(dao);
             }
         });
