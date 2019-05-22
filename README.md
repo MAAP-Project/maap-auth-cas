@@ -7,14 +7,25 @@ The MAAP CAS Overlay Template provides add-on functionality to the baseline [CAS
 
 # MAAP CAS Server Configuration
 
-## Versions
+## Installation
 
-- Ubuntu `18.04.2`
-- JDK `11`
-- Apache `2.4.29`
-- Tomcat `9.0.19.0`
-- CAS `6.0.4`
-- Syncope `2.1.4`
+Below are the installation steps used for setting up the MAAP SSO server. `Version` numbers are the latest available at the time of writing. Use the latest stable versions where possible.
+
+1. Create a new EC2 instance running Ubuntu `18.04.2`
+2. Install JDK `11`
+3. Install Apache `2.4.29`
+4. Install Tomcat `9.0.19.0`
+    - Used for hosting CAS core, CAS admin, and several Syncope apps.
+5. Install CAS `6.0.4`
+    - CAS should be installed by cloning this repository, and following the compilation instructions listed below.
+6. Install Maven `3.6.1`
+    - Prequisite for Syncope.
+7. Install Syncope `2.1.4`
+    - Refer to the [Maven Project](https://syncope.apache.org/docs/getting-started.html#maven-project) method for installation. 
+    - Once installed, install the MAAP [Gitlab Syncope](https://github.com/MAAP-Project/maap-auth-gitlab4syncope) extension for integration with the MAAP Gitlab server.
+8. Install Postgresql `10`
+    - During setup, create a new database and user named 'syncope' to enable communication with the default Syncope configuration.
+9. Install the [Cas Management Overlay](https://github.com/apereo/cas-management-overlay)
 
 ## Compilation
 
