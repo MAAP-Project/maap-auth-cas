@@ -9,7 +9,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.maap.oidc.OidcOAuth20AuthenticationRequestServiceSelectionStrategy;
 import org.apereo.cas.services.ServicesManager;
-//import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.pac4j.authentication.DelegatedClientFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.RestfulPersonAttributeDao;
@@ -51,7 +51,8 @@ public class MaapConfiguration {
     @RefreshScope
     public AuthenticationServiceSelectionStrategy oauth20AuthenticationRequestServiceSelectionStrategy() {
         return new OidcOAuth20AuthenticationRequestServiceSelectionStrategy(servicesManager.getIfAvailable(),
-                webApplicationServiceFactory, casProperties.getServer().getPrefix().concat("/oauth2.0/callbackAuthorize"));
+                webApplicationServiceFactory, 
+		OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()));
     }
 
     @Bean

@@ -26,10 +26,13 @@ public class MaapDelegatedClientFactory extends DelegatedClientFactory {
         String urs4_authurl = customProperties.getProperties().get("urs4_authurl");
         String urs4_tokenurl = customProperties.getProperties().get("urs4_tokenurl");
         String urs4_autoredirect = customProperties.getProperties().get("urs4_autoredirect");
+        String urs4_uid = customProperties.getProperties().get("urs4_uid");
 
         if (urs4_key != null && urs4_secret != null && urs4_authurl != null && urs4_tokenurl != null) {
-            val client = new Urs4Client(urs4_key, urs4_secret, urs4_authurl, urs4_tokenurl);
+            val client = new Urs4Client(urs4_key, urs4_secret, urs4_authurl, urs4_tokenurl, urs4_uid);
             client.setName("URS");
+	    client.getCustomProperties().put("urs4_key", urs4_key);
+            client.getCustomProperties().put("urs4_uid", urs4_uid);
             //LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
             if (urs4_autoredirect != null) {

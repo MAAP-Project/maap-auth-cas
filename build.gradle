@@ -45,6 +45,8 @@ dependencies {
     // Other CAS dependencies/modules may be listed here...
     compile "org.apereo.cas:cas-server-support-pac4j-webflow:${casServerVersion}"
     compile "org.apereo.cas:cas-server-support-oauth-webflow:${casServerVersion}"
+    compile "org.apereo.cas:cas-server-support-oauth:${casServerVersion}"
+    compile "org.apereo.cas:cas-server-support-oauth-core:${casServerVersion}"
     compile "org.apereo.cas:cas-server-support-json-service-registry:${casServerVersion}"
     compile "org.apereo.cas:cas-server-support-oidc:${casServerVersion}"
     compile "org.projectlombok:lombok:1.18.8"
@@ -54,7 +56,6 @@ dependencies {
     compile "org.apereo.cas:cas-server-support-pac4j-core-clients:${casServerVersion}"
     compile "org.pac4j:pac4j-core:${pac4jVersion}"
     compile "org.pac4j:pac4j-oauth:${pac4jVersion}"
-    compile "org.apereo.cas:cas-server-support-oauth:${casServerVersion}"
     compile "org.pac4j:pac4j-oidc:${pac4jVersion}"
     compile "org.apereo.cas:cas-server-core-authentication-attributes:${casServerVersion}"
     compile "org.apereo.cas:cas-server-core-services-api:${casServerVersion}"

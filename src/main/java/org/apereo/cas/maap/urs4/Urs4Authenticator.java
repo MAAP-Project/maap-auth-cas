@@ -31,13 +31,18 @@ public class Urs4Authenticator extends OAuth20Authenticator {
         final String profileUrl;
 
         try {
+            //Temporarily set key to the MAAP UID
+            this.configuration.setKey(this.configuration.getCustomParams().get("urs4_uid"));
+            this.configuration.setKey("maapauth");
             val service = (Urs4Service) this.configuration.buildService(context, client, null);
             Response response = service.getTokenResponse(code);
 
             accessToken = service.getAccessToken(response);
             profileUrl = new URL(new URL(((Urs4Api) this.configuration.getApi()).getAccessTokenEndpoint()), service.getProfileUrlToken(response)).toString();
             ((Urs4ProfileDefinition) this.configuration.getProfileDefinition()).setProfileUrl(profileUrl);
-        } catch (final IOException | InterruptedException | ExecutionException e) {
+            //Revert key back to the MAAP Client Id
+            this.configuration.setKey(this.configuration.getCustomParams().get("urs4_key"));
+	} catch (final IOException | InterruptedException | ExecutionException e) {
             throw new HttpCommunicationException("Error getting token:" + e.getMessage());
         }
         logger.debug("accessToken: {}", accessToken);
