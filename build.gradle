@@ -44,6 +44,7 @@ dependencies {
     compile "org.apereo.cas:cas-server-webapp${project.appServer}:${casServerVersion}"
     // Other CAS dependencies/modules may be listed here...
     compile "org.apereo.cas:cas-server-support-pac4j-webflow:${casServerVersion}"
+    compile "org.apereo.cas:cas-server-support-pac4j-core:${casServerVersion}" 
     compile "org.apereo.cas:cas-server-support-oauth-webflow:${casServerVersion}"
     compile "org.apereo.cas:cas-server-support-oauth:${casServerVersion}"
     compile "org.apereo.cas:cas-server-support-oauth-core:${casServerVersion}"
@@ -57,6 +58,8 @@ dependencies {
     compile "org.pac4j:pac4j-core:${pac4jVersion}"
     compile "org.pac4j:pac4j-oauth:${pac4jVersion}"
     compile "org.pac4j:pac4j-oidc:${pac4jVersion}"
+    compile "org.pac4j:pac4j-cas:${pac4jVersion}"
+    compile "org.pac4j:pac4j-saml:${pac4jVersion}"
     compile "org.apereo.cas:cas-server-core-authentication-attributes:${casServerVersion}"
     compile "org.apereo.cas:cas-server-core-services-api:${casServerVersion}"
 }
