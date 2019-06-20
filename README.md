@@ -93,3 +93,13 @@ Run the CAS web application as an executable WAR.
 ## External
 
 Deploy the binary web application file `cas.war` after a successful build to a servlet container of choice.
+
+# MAAP Developer Notes
+
+The following bugs and breaking changes introduced in CAS v6 that necessitated overlay patches for MAAP:
+
+1. *Incorrect casting of the Pac4j `generic` property*: this error, for which we submitted a PR to CAS (https://github.com/apereo/cas/pull/4046), broke the generic OIDC delegation process which, in turn, broke the ESA login function for our application. The overlay additions here may be removed once our merged PR is released in the next version of CAS: https://github.com/MAAP-Project/maap-auth-cas/commit/78e66607f397ddba7d34ac806a925562b9849853
+
+2. *Breaking change to OAuth libraries*: prior to CAS v6, OAuth delegation honored the configured client name throughout the authentication to redirection steps during the login process, but this was evidently changed to substitute the client 'id' with the client name for the redirection step in v6, which led to an invalid redirect when logging in to URS. See: https://github.com/MAAP-Project/maap-auth-cas/commit/756b9c9e73edb0adaefd67d06b76b4fed7979215
+
+3. *Change to configuration schema*: according to the official CAS documentation, the config structure with respect to `cas.authn.pac4j.oauth2` settings from v5.3 carried over to v6, though we discovered the schema had changed, which required the config changes noted here: https://github.com/apereo/cas/pull/3656#issuecomment-494702487
