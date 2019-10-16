@@ -25,6 +25,7 @@ import java.util.*;
 
 public class SyncopeRestfulPersonAttributeDao extends RestfulPersonAttributeDao {
     private final ObjectMapper jacksonObjectMapper = new ObjectMapper().findAndRegisterModules();
+    private final String DEFAULT_PASSWORD = "HELLO123.";
 
     @Override
     public IPersonAttributes getPerson(final String uid) {
