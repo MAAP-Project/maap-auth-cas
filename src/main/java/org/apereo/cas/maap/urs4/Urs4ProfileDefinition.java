@@ -136,6 +136,7 @@ public class Urs4ProfileDefinition extends OAuth20ProfileDefinition<Urs4Profile,
         HttpUriRequest request = new HttpGet(uri);
         request.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + encoding);
         HttpResponse response = client.execute(request);
+
         Map attributes = jacksonObjectMapper.readValue(response.getEntity().getContent(), Map.class);
 
         //If no user was found, add the user now to Syncope
@@ -149,14 +150,13 @@ public class Urs4ProfileDefinition extends OAuth20ProfileDefinition<Urs4Profile,
             requestPost.addHeader("X-Syncope-Domain", "Master");
             requestPost.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + encoding);
 
-
             ((HttpPost) requestPost).setEntity(new StringEntity(
                     "{ "
                             + "\"@class\": \"org.apache.syncope.common.lib.to.UserTO\", "
                             + "\"username\" : \"" + email + "\", "
                             + "\"password\" : \"" + DEFAULT_PASSWORD + "\", "
                             + "\"realm\" : \"/\", "
-                            + "\"status\" : \"" + getInitialStatus(email, syncopeEmailWhitelist) + "\", "
+                            + "\"status\" : \"active\", "
                             + "\"auxClasses\" : [], "
                             + "\"plainAttrs\" : [\n" +
                             "    {\n" +
@@ -189,14 +189,69 @@ public class Urs4ProfileDefinition extends OAuth20ProfileDefinition<Urs4Profile,
                             + "\"resources\" : []"
                             + "}"));
 
-            client.execute(requestPost);
+            HttpResponse responsePost = client.execute(requestPost);
+
+            if(!emailWhitelisted(email, syncopeEmailWhitelist)) {
+                String uid = getUidForUser(client, syncopeUrl, encoding, email);
+                suspendUser(client, uid, syncopeUrl, encoding);
+            }
         }
     }
 
-    private String getInitialStatus(String email, String whitelist) {
-        return emailWhitelisted(email, whitelist) ?
-                "Active" :
-                "Suspended";
+    private String getUidForUser(
+            final HttpClient client,
+            final String syncopeUrl,
+            final String encoding,
+            final String email) throws URISyntaxException, IOException {
+
+        final URIBuilder uriBuilder = new URIBuilder(syncopeUrl + "/users/" + email);
+        final URI uri = uriBuilder.build();
+        final HttpUriRequest request = new HttpGet(uri);
+        request.addHeader("Accept", "application/json");
+        request.addHeader("Content-Type", "application/json");
+        request.addHeader("X-Syncope-Domain", "Master");
+        request.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + encoding);
+        final HttpResponse response = client.execute(request);
+
+        final Map attributes = jacksonObjectMapper.readValue(response.getEntity().getContent(), Map.class);
+
+        attributes.values().removeAll(Collections.singleton(null));
+        attributes.remove("@class");
+        final List plainAttributes = (List) attributes.remove("plainAttrs");
+        plainAttributes.forEach(plainAttribute -> {
+            attributes.put(((Map) plainAttribute).get("schema"), ((Map) plainAttribute).get("values"));
+        });
+
+        if (attributes.get("key") != null) {
+            return attributes.get("key").toString();
+        }
+
+        return null;
+    }
+
+    private void suspendUser(
+            final HttpClient client,
+            final String uid,
+            final String syncopeUrl,
+            final String encoding) throws URISyntaxException, IOException {
+
+        URIBuilder uriBuilderStatus = new URIBuilder(syncopeUrl + "/users/" + uid + "/status");
+        URI uriStatus = uriBuilderStatus.build();
+
+        HttpUriRequest requestStatus = new HttpPost(uriStatus);
+        requestStatus.addHeader("Accept", "application/json");
+        requestStatus.addHeader("Content-Type", "application/json");
+        requestStatus.addHeader("X-Syncope-Domain", "Master");
+        requestStatus.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + encoding);
+
+        ((HttpPost) requestStatus).setEntity(new StringEntity("{ "
+                + "\"operation\": \"ADD_REPLACE\", "
+                + "\"key\" : \"" + uid + "\", "
+                + "\"type\" : \"SUSPEND\", "
+                + "\"resources\" : [] "
+                + "}"));
+
+        client.execute(requestStatus);
     }
 
     private boolean emailWhitelisted(String email, String whitelist) {
