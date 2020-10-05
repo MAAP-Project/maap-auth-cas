@@ -9,17 +9,20 @@
     <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
 </head>
 <body>
-    <footer th:fragment="footer" class="footer" role="contentinfo">
-        <div class="container">
-            <!--
+    <footer th:fragment="footer" class="footer" role="contentinfo" style="background-color: white; height: 180px; text-align: center;">
+        <!--<div class="container" style="background-color: black;">
+            <img class="esa-nasa-logo" src="images/nasaesa_sm.png" style="text-align: center; background-color: black;" width=190 height=50>
+            <span class="collab-sp" style="display: block; height: 20px; color: white; text-align: center; background-color: black;">MAAP is a collaboration between ESA and NASA</span>
+            <span id="esa-maap-sp" style="margin: 10px; display: block; height: 20px; color: white; text-align: center; background-color: black;">ESA MAAP</span>
+            
             <span id="copyright" th:utext="#{copyright}"></span>
             <span>Powered by <a href="http://www.apereo.org/cas">
                 Apereo Central Authentication Service
                 <span th:text="${T(org.apereo.cas.util.CasVersion).getVersion()}"></span>
                 <span th:text="${T(org.apereo.cas.util.CasVersion).getDateTime()}"></span> </a>
             </span>
-            -->
-        </div>
+            
+        </div>-->
     </footer>
 </body>
 </html>
