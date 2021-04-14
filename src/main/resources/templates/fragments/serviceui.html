@@ -10,11 +10,11 @@
 </head>
 <body>
 <main role="main" class="container mt-3 mb-3">
-<div th:fragment="serviceUI" th:if="${registeredService}" id="serviceui" class="alert alert-info" style="display: none;">
+<div th:fragment="serviceUI" th:if="${registeredService}" id="serviceui" class="alert alert-info" style="background: #00549f">
     <div th:if="${serviceUIMetadata}">
-       <!-- <table>
+        <table>
             <tr>
-                <td>
+                <td style="text-align: left">
                     <img th:if="${serviceUIMetadata.logoUrl}"
                          th:title="${serviceUIMetadata.displayName}"
                          th:alt="${serviceUIMetadata.displayName}"
@@ -39,19 +39,20 @@
                     <p th:if="${serviceUIMetadata.privacyStatementURL}" th:utext="#{screen.mdui.privacylink.text(${serviceUIMetadata.privacyStatementURL})}">serviceUIMetadata.privacyStatementURL</p>
                 </td>
             </tr>
-       </table>-->
+       </table>
     </div>
 
     <div th:unless="${serviceUIMetadata}">
         <table>
             <tr>
-                <td id="servicedesc">
+                <td id="servicedesc" style="text-align: left">
                     <h5 th:text="${registeredService.name}">Registered Service Name</h5>
                     <p th:text="${registeredService.description}">Registered Service Description</p>
                 </td>
                 <td>
                     <img th:src="${registeredService.logo}" th:if="${registeredService.logo}"/>
-                    <img th:src="@{images/webapp.png}" th:unless="${registeredService.logo}"/>
+                   <!-- <img th:src="@{images/webapp.png}" th:unless="${registeredService.logo}"/>
+                   -->
                 </td>
             </tr>
         </table>
@@ -60,4 +61,3 @@
 </main>
 </body>
 </html>
-~      
