@@ -55,18 +55,18 @@ public class SyncopeRestfulPersonAttributeDao extends RestfulPersonAttributeDao 
                 attributes.put(((Map) plainAttribute).get("schema"), ((Map) plainAttribute).get("values"));
             });
 
-            if (attributes.get("key") != null) {
-                attributes.put("syncopeRestUrl", getUrl());
+            // if (attributes.get("key") != null) {
+            //     attributes.put("syncopeRestUrl", getUrl());
 
-                String syncopeToken = getAccessTokenForUser(client, uid);
+            //     String syncopeToken = getAccessTokenForUser(client, uid);
 
-                if (syncopeToken == null) {
-                    String tempPassword = setRandomPasswordForUser(client, uid, attributes.get("key").toString());
-                    syncopeToken = createAccessTokenForUserPass(uid, tempPassword);
-                }
+            //     if (syncopeToken == null) {
+            //         String tempPassword = setRandomPasswordForUser(client, uid, attributes.get("key").toString());
+            //         syncopeToken = createAccessTokenForUserPass(uid, tempPassword);
+            //     }
 
-                attributes.put("syncopeToken", syncopeToken);
-            }
+            //     attributes.put("syncopeToken", syncopeToken);
+            // }
 
             if (isCaseInsensitiveUsername()) {
                 return new CaseInsensitiveNamedPersonImpl(uid, stuffAttributesIntoListValues(attributes));

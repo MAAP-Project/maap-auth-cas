@@ -34,9 +34,12 @@ public class MaapDelegatedClientFactory extends DelegatedClientFactory {
         String syncope_user = customProperties.getProperties().get("syncope_user");
         String syncope_password = customProperties.getProperties().get("syncope_password");
         String syncope_url = customProperties.getProperties().get("syncope_url");
+        String gitlab_user = customProperties.getProperties().get("gitlab_user");
+        String gitlab_password = customProperties.getProperties().get("gitlab_password");
+        String gitlab_url = customProperties.getProperties().get("gitlab_url");
 
         if (urs4_key != null && urs4_secret != null && urs4_authurl != null && urs4_tokenurl != null) {
-            val client = new Urs4Client(
+            Urs4Client client = new Urs4Client(
                     urs4_key,
                     urs4_secret,
                     urs4_authurl,
@@ -45,7 +48,10 @@ public class MaapDelegatedClientFactory extends DelegatedClientFactory {
                     syncope_user,
                     syncope_password,
                     syncope_url,
-                    syncope_email_whitelist);
+                    syncope_email_whitelist,
+                    gitlab_user,
+                    gitlab_password,
+                    gitlab_url);
             client.setName("URS");
 	        client.getCustomProperties().put("urs4_key", urs4_key);
             client.getCustomProperties().put("urs4_uid", urs4_uid);
