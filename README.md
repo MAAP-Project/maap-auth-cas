@@ -4,7 +4,7 @@ This repository serves as both the source for the MAAP [CAS overlay template](ht
 
 The MAAP CAS Overlay Template provides add-on functionality to the baseline [CAS framework](https://www.apereo.org/projects/cas), including [Earthdata Login](https://urs.earthdata.nasa.gov) support for NASA users, and integration with [Syncope](https://syncope.apache.org/), an Identity Management library for storing MAAP user and organization data.
 
-## Prerequisites
+## Prerequisite
 Start a new t3.xlarge instance with Ubuntu and configure it in the appropriate subnet. Use a 100GB primary volume.
 
 ## Installation
@@ -18,7 +18,7 @@ sudo apt-get dist-upgrade
 3. Install Apache 
    - Enable mods `proxy_ajp` and `proxy_http`
 4. Install Tomcat 
-   - Make copies of the default tomcat instance at `/opt/tomcat/apache-tomcat-*` to the home directory to host three sites we'll be creating: `tomcat-cas`, `tomcat-syncope-core` and `tomcat-syncope-ui`.
+   - Make copies of the default tomcat instance at `/opt/tomcat/apache-tomcat-*` to the home directory for three sites we'll be creating: `tomcat-cas`, `tomcat-syncope-core` and `tomcat-syncope-ui`.
 5. Install CAS 
 ```
 git clone https://github.com/MAAP-Project/maap-auth-cas.git
@@ -58,13 +58,13 @@ cp ./console/target/syncope-console.war ~/tomcat-syncope-core/webapps/
 
 1. Fill in the `<add>` and `<env>` fields in the [CAS config file](etc/cas/config/cas.properties), and copy it to `/etc/cas/config/` directory.
 2. Create a new folder, `/etc/cas/services-repo` to store the service definitions for each site that will use the MAAP Auth service. These include:
-  - ESA ADE
-  - ESA GitLab
-  - ESA Liferay
-  - NASA API
-  - NASA ADE - [example config file](/etc/cas/services-repo/NasaAde-123.json) 
-  - NASA GitLab
-  - NASA Portal
+   - ESA ADE
+   - ESA GitLab
+   - ESA Liferay
+   - NASA API
+   - NASA ADE - [example config file](/etc/cas/services-repo/NasaAde-123.json) 
+   - NASA GitLab
+   - NASA Portal
 3. Log into the Syncope console, and add the necessary settings to store MAAP user accounts 
   - Add the following schemas to the 'PLAIN' section:
     - display_name
