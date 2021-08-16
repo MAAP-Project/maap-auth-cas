@@ -23,7 +23,7 @@ sudo apt-get dist-upgrade
 ```
 git clone https://github.com/MAAP-Project/maap-auth-cas.git
 cd maap-auth-cas
-gradle clean build
+./gradlew clean build
 cp ./build/libs/cas.war ~/tomcat-cas/webapps/
 ```
 6. Install Maven (required for Syncope)
