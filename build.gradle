@@ -9,6 +9,7 @@ buildscript {
     dependencies {
         classpath "de.undercouch:gradle-download-task:${project.gradleDownloadTaskVersion}"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${project.springBootVersion}"
+	classpath "org.scaldingspoon.gradle:gradle-waroverlay-plugin:0.9.3"
         classpath "gradle.plugin.com.google.cloud.tools:jib-gradle-plugin:${project.jibVersion}"
         classpath "com.boazj.gradle:gradle-log-plugin:${project.gradleLogVersion}"
     }
@@ -31,7 +32,7 @@ def pac4jVersion = project.'pac4jVersion'
 project.ext."casServerVersion" = casServerVersion
 project.ext."casWebApplicationBinaryName" = casWebApplicationBinaryName
 
-apply from: rootProject.file("gradle/waroverlay.gradle")
+apply plugin: "waroverlay"
 apply from: rootProject.file("gradle/tasks.gradle")
 
 apply plugin: "war"
