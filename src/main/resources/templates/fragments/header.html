@@ -7,12 +7,30 @@
 
     <title>Header Fragment</title>
     <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+
+    <script>
+        
+        window.onload = (event) => {
+
+            var authHost = new URL(window.location).host;
+
+            var homeHost = authHost.replace("auth.","");
+            if( authHost === 'auth.maap-project.org') {
+                homeHost = 'www.' + homeHost;
+            }
+
+            var homeAnchor = document.getElementById('home-anchor');
+            homeAnchor.href = 'https://' + homeHost;
+
+        };
+
+    </script>
 </head>
 <body>
 
     <header th:fragment="header" role="banner">
         <div>
-            <a href="https://www.maap.xyz/"><img src="images/cropped-nasamaap2.png" style="padding: 15px 40px;float: left;" width="auto" height="90"></a>
+            <a id="home-anchor" href="https://www.maap-project.org/"><img src="images/cropped-nasamaap2.png" style="padding: 15px 40px;float: left;" width="auto" height="90"></a>
         </div>
         <br>
        <!--     <div id="navigation-bar" style="text-align: left;">
