@@ -2,7 +2,7 @@ FROM ubuntu:18.04
 LABEL maintainer="anil.natha@jpl.nasa.gov"
 LABEL version="0.0.1"
 
-RUN apt-get update && apt-get install -y default-jdk apache2 curl && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y default-jdk apache2 curl && apt-get clean
 
 # Enable proxy_ajp and proxy_http
 RUN a2enmod proxy_ajp
