@@ -25,5 +25,20 @@ RUN chmod -R g+r conf
 RUN chmod g+x conf
 RUN chown -R tomcat webapps/ work temp/ logs
 
+###########################################################################
+# Set up tomcat-cas instance
 
-CMD ["/opt/tomcat/bin/catalina.sh", "run"]
+WORKDIR /tomcat
+RUN cp -r /opt/tomcat /tomcat/tomcat-cas
+COPY ./tomcat-cas-server.xml /tomcat/tomcat-cas/conf/server.xml
+
+RUN mkdir /tmp/maap-auth-cas
+COPY . /tmp/maap-auth-cas/
+WORKDIR /tmp/maap-auth-cas
+RUN ./gradlew clean build
+RUN cp ./build/libs/cas.war /tomcat/tomcat-cas/webapps/
+
+###########################################################################
+# Default command to execute to run container
+
+CMD ["/tomcat/tomcat-cas/bin/catalina.sh", "run"]
