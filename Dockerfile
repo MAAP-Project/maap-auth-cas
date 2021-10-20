@@ -25,6 +25,5 @@ RUN chmod -R g+r conf
 RUN chmod g+x conf
 RUN chown -R tomcat webapps/ work temp/ logs
 
-EXPOSE 8080
 
 CMD ["/opt/tomcat/bin/catalina.sh", "run"]
