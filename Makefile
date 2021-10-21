@@ -8,10 +8,10 @@ remove-container:						## Remove container
 	docker container rm $(CONTAINER_NAME)
 
 build-image:	## Build image
-	docker build -t $(IMAGE_NAME) .
+	docker build --force-rm -t $(IMAGE_NAME) .
 
 build-image-verbose: ## Build Image and show verbose output
-	docker build -t $(IMAGE_NAME) --progress=plain .
+	docker build --force-rm -t $(IMAGE_NAME) --progress=plain .
 
 run-container: ## Run Container
 	docker run --name $(CONTAINER_NAME) -p 80:8001 $(IMAGE_NAME)
