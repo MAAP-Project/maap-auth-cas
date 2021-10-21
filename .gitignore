@@ -19,3 +19,4 @@ bin/
 tmp/
 ./apache-tomcat
 apache-tomcat.zip
+etc/ssl/**

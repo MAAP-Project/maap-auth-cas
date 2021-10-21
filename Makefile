@@ -14,7 +14,7 @@ build-image-verbose: ## Build Image and show verbose output
 	docker build --force-rm -t $(IMAGE_NAME) --progress=plain .
 
 run-container: ## Run Container
-	docker run --name $(CONTAINER_NAME) -p 80:8001 $(IMAGE_NAME)
+	docker run --name $(CONTAINER_NAME) -p 443:443 $(IMAGE_NAME)
 
 start-container: ## Start Container
 	docker start $(CONTAINER_NAME)

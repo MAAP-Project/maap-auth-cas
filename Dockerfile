@@ -5,12 +5,17 @@ LABEL version="0.0.1"
 RUN apt-get update && apt-get install -y default-jdk apache2 curl supervisor && rm -rf /var/lib/apt/lists/* && apt-get clean
 
 ###########################################################################
+# Copy Certificates
+
+COPY ./etc/ssl/certs/* /etc/ssl/certs
+COPY ./etc/ssl/private/* /etc/ssl/private
+
+###########################################################################
 # Apache configuration
 
 RUN a2enmod proxy_ajp
 RUN a2enmod proxy_http
-
-COPY ./etc/apache2/ports.conf /etc/apache2/
+RUN a2enmod ssl
 
 COPY ./etc/apache2/sites-available/001-tomcat-cas.conf /etc/apache2/sites-available/
 RUN a2ensite 001-tomcat-cas
