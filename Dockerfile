@@ -2,7 +2,7 @@ FROM ubuntu:18.04
 LABEL maintainer="anil.natha@jpl.nasa.gov"
 LABEL version="0.0.1"
 
-RUN apt-get update && apt-get install -y default-jdk apache2 curl && apt-get clean
+RUN apt-get update && apt-get install -y default-jdk apache2 curl supervisor && rm -rf /var/lib/apt/lists/* && apt-get clean
 
 ###########################################################################
 # Apache configuration
@@ -48,6 +48,12 @@ RUN ./gradlew clean build
 RUN cp ./build/libs/cas.war /tomcat/tomcat-cas/webapps/
 
 ###########################################################################
+# Set up supervisord
+
+COPY ./etc/supervisor/supervisord.conf /etc/supervisor/
+COPY ./etc/supervisor/conf.d/supervisor_programs.conf /etc/supervisor/conf.d/
+
+###########################################################################
 # Default command to execute to run container
 
-CMD ["/tomcat/tomcat-cas/bin/catalina.sh", "run"]
+CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
