@@ -10,11 +10,9 @@ RUN apt-get update && apt-get install -y default-jdk apache2 curl && apt-get cle
 RUN a2enmod proxy_ajp
 RUN a2enmod proxy_http
 
-RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
-RUN echo "Listen 8001" >> /etc/apache2/ports.conf
+COPY ./etc/apache2/ports.conf /etc/apache2/
 
-COPY ./etc/apache/sites-available/001-tomcat-cas.conf /etc/apache2/sites-available/
-RUN a2dissite 000-default
+COPY ./etc/apache2/sites-available/001-tomcat-cas.conf /etc/apache2/sites-available/
 RUN a2ensite 001-tomcat-cas
 
 ###########################################################################
