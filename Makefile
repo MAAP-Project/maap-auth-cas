@@ -1,5 +1,6 @@
 export CONTAINER_NAME = maap-auth-cas
 export IMAGE_NAME = maap-auth-cas
+export RUN_OPTIONS = ""
 
 build-image:	## Build image
 	docker build --force-rm -t $(IMAGE_NAME) .
@@ -17,7 +18,10 @@ remove-containers:  ## Remove all containers related to this project.
 	docker ps -a | awk '{ print $$1,$$2 }' | grep "${CONTAINER_NAME}" | awk '{print $$1}' | xargs -I {} docker rm -f {}
 
 run-container: ## Run Container
-	docker run --name $(CONTAINER_NAME) -p 443:443 $(IMAGE_NAME)
+	docker run --name $(CONTAINER_NAME) $(RUN_OPTIONS) -v "src":"/tmp/maap-auth-cas/src" -p 443:443 $(IMAGE_NAME)
+
+run-container-background: RUN_OPTIONS = "-d" ## Run Container
+run-container-background: run-container
 
 start-container: ## Start Container
 	docker start $(CONTAINER_NAME)
