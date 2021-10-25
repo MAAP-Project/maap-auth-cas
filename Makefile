@@ -1,17 +1,20 @@
 export CONTAINER_NAME = maap-auth-cas
 export IMAGE_NAME = maap-auth-cas
 
-remove-image:	## Remove image
-	docker image rm $(IMAGE_NAME)
-
-remove-container:						## Remove container
-	docker container rm $(CONTAINER_NAME)
-
 build-image:	## Build image
 	docker build --force-rm -t $(IMAGE_NAME) .
 
 build-image-verbose: ## Build Image and show verbose output
 	docker build --force-rm -t $(IMAGE_NAME) --progress=plain .
+
+login-container: ## Open terminal window using running container
+	docker exec -it $(CONTAINER_NAME) /bin/bash
+
+remove-images: remove-containers	## Remove all images related to this project. Also removes project's containers.
+	docker image ls | awk '{print $$1}' | grep "${IMAGE_NAME}" | awk '{print $$1}' | xargs -I {} docker rmi -f {}
+
+remove-containers:  ## Remove all containers related to this project.
+	docker ps -a | awk '{ print $$1,$$2 }' | grep "${CONTAINER_NAME}" | awk '{print $$1}' | xargs -I {} docker rm -f {}
 
 run-container: ## Run Container
 	docker run --name $(CONTAINER_NAME) -p 443:443 $(IMAGE_NAME)
@@ -21,9 +24,6 @@ start-container: ## Start Container
 
 stop-container: ## Stop Container
 	docker stop $(CONTAINER_NAME)
-
-login-container: ## Login and open bash window for container
-	docker exec -it $(CONTAINER_NAME) /bin/bash
 
 # ----------------------------------------------------------------------------
 # Self-Documented Makefile
