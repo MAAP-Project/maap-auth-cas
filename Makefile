@@ -29,6 +29,9 @@ start-container: ## Start Container
 stop-container: ## Stop Container
 	docker stop $(CONTAINER_NAME)
 
+watch-containers: ## Watch running containers
+	watch docker container ls
+
 # ----------------------------------------------------------------------------
 # Self-Documented Makefile
 # ref: http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
