@@ -18,7 +18,7 @@ remove-containers:  ## Remove all containers related to this project.
 	docker ps -a | awk '{ print $$1,$$2 }' | grep "${CONTAINER_NAME}" | awk '{print $$1}' | xargs -I {} docker rm -f {}
 
 run-container: ## Run Container
-	docker run --name $(CONTAINER_NAME) $(RUN_OPTIONS) -v "src":"/tmp/maap-auth-cas/src" -p 443:443 $(IMAGE_NAME)
+	docker run --name $(CONTAINER_NAME) $(RUN_OPTIONS) -v "$(PWD)/src:/tmp/maap-auth-cas/src" -p 443:443 $(IMAGE_NAME)
 
 run-container-background: RUN_OPTIONS = "-d" ## Run container in background (detached mode)
 run-container-background: run-container
