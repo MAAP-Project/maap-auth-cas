@@ -20,7 +20,7 @@ remove-containers:  ## Remove all containers related to this project.
 run-container: ## Run Container
 	docker run --name $(CONTAINER_NAME) $(RUN_OPTIONS) -v "src":"/tmp/maap-auth-cas/src" -p 443:443 $(IMAGE_NAME)
 
-run-container-background: RUN_OPTIONS = "-d" ## Run Container
+run-container-background: RUN_OPTIONS = "-d" ## Run container in background (detached mode)
 run-container-background: run-container
 
 start-container: ## Start Container
