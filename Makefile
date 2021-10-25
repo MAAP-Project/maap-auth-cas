@@ -1,6 +1,6 @@
 export CONTAINER_NAME = maap-auth-cas
 export IMAGE_NAME = maap-auth-cas
-export RUN_OPTIONS = ""
+export RUN_OPTIONS = 
 
 build-image:	## Build image
 	docker build --force-rm -t $(IMAGE_NAME) .
