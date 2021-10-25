@@ -8,6 +8,11 @@ build-image:	## Build image
 build-image-verbose: ## Build Image and show verbose output
 	docker build --force-rm -t $(IMAGE_NAME) --progress=plain .
 
+rebuild-war: ## Builds war file and deploys it to Tomcat webapps folder
+	docker exec $(CONTAINER_NAME) /tmp/maap-auth-cas/gradlew clean build
+	docker exec $(CONTAINER_NAME) cp /tmp/maap-auth-cas/build/libs/cas.war /tomcat/tomcat-cas/webapps/
+	docker exec $(CONTAINER_NAME) supervisorctl restart tomcat
+
 login-container: ## Open terminal window using running container
 	docker exec -it $(CONTAINER_NAME) /bin/bash
 
