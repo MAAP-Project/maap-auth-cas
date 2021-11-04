@@ -13,6 +13,12 @@ rebuild-war: ## Builds war file and deploys it to Tomcat webapps folder
 	docker exec $(CONTAINER_NAME) cp /tmp/maap-auth-cas/build/libs/cas.war /tomcat/tomcat-cas/webapps/
 	docker exec $(CONTAINER_NAME) supervisorctl restart tomcat
 
+list-containers: ## List containers related to this project
+	docker container ls --all --filter "ancestor=$(IMAGE_NAME)"
+
+list-images: ## List images related to this project
+	docker images maap-auth-cas
+
 login-container: ## Open terminal window using running container
 	docker exec -it $(CONTAINER_NAME) /bin/bash
 
