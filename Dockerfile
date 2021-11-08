@@ -5,7 +5,15 @@ LABEL version="0.0.1"
 RUN apt-get update && apt-get install -y default-jdk apache2 curl supervisor && rm -rf /var/lib/apt/lists/* && apt-get clean
 
 ###########################################################################
-# Copy Certificates
+# Set up CAS configuration settings
+
+WORKDIR /etc/cas/config
+COPY ./etc/cas/config/* /etc/cas/config
+
+RUN mkdir /etc/cas/services-repo
+
+###########################################################################
+# Copy certificates
 
 COPY ./etc/ssl/certs/* /etc/ssl/certs
 COPY ./etc/ssl/private/* /etc/ssl/private
