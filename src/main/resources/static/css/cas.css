@@ -10203,7 +10203,7 @@
     flex-direction: column;
     margin: 0px 64px;
     padding: 16px;
-    transition: 0.25s;
+    transition: 0.15s;
   }
 
   .auth-provider-card:hover {
