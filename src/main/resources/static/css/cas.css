@@ -10225,6 +10225,7 @@
 
   .auth-provider-card {
     align-items: center;
+    background-color: #F8F9FA;
     border: 1px solid rgba(0, 0, 0, 0.125);
     border-radius: 0.25rem;
     display: -webkit-box;
@@ -10240,6 +10241,7 @@
   }
 
   .auth-provider-card:hover {
+    background-color: white;
     border: 1px solid rgba(0, 0, 0, 0.5);
   }
 
