@@ -10195,6 +10195,10 @@
     padding: 16px 40px;
   }
 
+  .auth-provider-card-container {
+    margin: 24px 24px;
+  }
+
   .auth-provider-card {
     align-items: center;
     border: 1px solid rgba(0, 0, 0, 0.125);
@@ -10212,11 +10216,7 @@
     border: 1px solid rgba(0, 0, 0, 0.5);
   }
 
-  .auth-provider-card .logo {
-    margin: 10px 0px;
-  }
-
-  .auth-provider-card a {
+  .auth-provider-card .btn {
     background-color: #00338D;
     border-radius: 0.25rem;
     color: white;
@@ -10229,7 +10229,7 @@
     transition: 0.15s;
   }
 
-  .auth-provider-card a:hover {
+  .auth-provider-card:hover .btn {
     background-color: #00549f;
   }
 
