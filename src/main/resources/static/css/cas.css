@@ -10193,10 +10193,7 @@
     flex-wrap: wrap;
     justify-content: center;
     padding: 16px 40px;
-  }
-
-  .auth-provider-card-container {
-    margin: 24px 24px;
+    gap: 24px 24px;
   }
 
   .auth-provider-card {
