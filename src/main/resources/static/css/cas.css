@@ -10197,10 +10197,17 @@
 
   .auth-provider-card {
     align-items: center;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 0.25rem;
     display: flex;
     flex-direction: column;
     margin: 0px 64px;
     padding: 16px;
+    transition: 0.25s;
+  }
+
+  .auth-provider-card:hover {
+    border: 1px solid rgba(0, 0, 0, 0.5);
   }
 
   .auth-provider-card .logo {
