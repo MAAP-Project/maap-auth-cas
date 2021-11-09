@@ -565,10 +565,20 @@
     margin-right: auto;
     margin-left: auto;
   }
+
+  @media (min-width: 0px) {
+    body > .container {
+      padding-top: 80px !important;
+    }
+  }
   
   @media (min-width: 576px) {
     .container {
       max-width: 540px;
+    }
+
+    body > .container {
+      padding-top: 80px !important;
     }
   }
   
@@ -576,17 +586,29 @@
     .container {
       max-width: 720px;
     }
+
+    body > .container {
+      padding-top: 80px !important;
+    }
   }
   
   @media (min-width: 992px) {
     .container {
       max-width: 960px;
     }
+
+    body > .container {
+      padding-top: 120px !important;
+    }
   }
   
   @media (min-width: 1200px) {
     .container {
       max-width: 1140px;
+    }
+
+    body > .container {
+      padding-top: 120px !important;
     }
   }
   
@@ -10156,10 +10178,6 @@
   .btn-oidc .badge {
     color: #f7931e;
     background-color: #fff;
-  }
-  
-  body > .container {
-    padding-top: 120px !important;
   }
   
   #cas-resource-list {
