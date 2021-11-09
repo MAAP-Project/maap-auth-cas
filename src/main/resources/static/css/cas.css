@@ -10224,4 +10224,10 @@
     line-height: 150%;
     padding: 10px 18px;
     margin: 10px;
+    transition: 0.15s;
   }
+
+  .auth-provider-card a:hover {
+    background-color: #00549f;
+  }
+
