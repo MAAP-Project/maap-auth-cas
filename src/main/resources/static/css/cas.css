@@ -567,6 +567,10 @@
   }
 
   @media (min-width: 0px) {
+    .container {
+      max-width: 400px;
+    }
+
     body > .container {
       padding-top: 80px !important;
     }
