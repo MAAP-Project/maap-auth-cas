@@ -5,6 +5,7 @@ LABEL version="0.0.1"
 RUN apt-get update && apt-get install -y default-jdk apache2 curl supervisor && rm -rf /var/lib/apt/lists/* && apt-get clean
 
 ###########################################################################
+###########################################################################
 # Set up CAS configuration settings
 
 WORKDIR /etc/cas/config
@@ -13,11 +14,13 @@ COPY ./etc/cas/config/* /etc/cas/config
 RUN mkdir /etc/cas/services-repo
 
 ###########################################################################
+###########################################################################
 # Copy certificates
 
 COPY ./etc/ssl/certs/* /etc/ssl/certs
 COPY ./etc/ssl/private/* /etc/ssl/private
 
+###########################################################################
 ###########################################################################
 # Apache configuration
 
@@ -29,7 +32,8 @@ COPY ./etc/apache2/sites-available/001-tomcat-cas.conf /etc/apache2/sites-availa
 RUN a2ensite 001-tomcat-cas
 
 ###########################################################################
-# Apache Tomacat installation
+###########################################################################
+# Apache Tomcat installation
 
 RUN groupadd tomcat
 RUN useradd -s /bin/false -g tomcat -d /opt/tomcat tomcat
@@ -61,11 +65,13 @@ RUN ./gradlew clean build
 RUN cp ./build/libs/cas.war /tomcat/tomcat-cas/webapps/
 
 ###########################################################################
+###########################################################################
 # Set up supervisord
 
 COPY ./etc/supervisor/supervisord.conf /etc/supervisor/
 COPY ./etc/supervisor/conf.d/supervisor_programs.conf /etc/supervisor/conf.d/
 
+###########################################################################
 ###########################################################################
 # Default command to execute to run container
 
