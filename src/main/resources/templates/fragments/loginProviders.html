@@ -15,7 +15,7 @@
         <h1>MAAP Login</h1>
         <p>You may login to MAAP using one of the user registration services below.</p>
 
-        <div th:if="${delegatedAuthenticationProviderUrls}" th:class="${delegatedAuthenticationProviderDominant == null ? 'auth-provider-cards d-md-flex' : ''}">
+        <div th:if="${delegatedAuthenticationProviderUrls}" th:class="'auth-provider-cards d-md-flex'">
 
             <th:block th:each="entry: ${delegatedAuthenticationProviderUrls}">
                 <th:block th:insert="~{fragments/authProviders :: __${entry.name.toUpperCase()}__ (${entry.redirectUrl},${entry.autoRedirect})}"></div>
