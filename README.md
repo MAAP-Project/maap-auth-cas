@@ -47,7 +47,7 @@ mvn archetype:generate \
 ```
 mvn clean install
 cp ./core/target/syncope.war ~/tomcat-syncope-core/webapps/
-cp ./console/target/syncope-console.war ~/tomcat-syncope-core/webapps/
+cp ./console/target/syncope-console.war ~/tomcat-syncope-ui/webapps/
 
 ```
 9. OPTIONAL: Install the [Cas Management Overlay](https://github.com/apereo/cas-management-overlay)
