@@ -12,9 +12,6 @@
 <main role="main" class="container mt-3 mb-3">
     <div th:fragment="loginProviders" th:remove="tag">
 
-        <h1>MAAP Login</h1>
-        <p>You may login to MAAP using one of the services below.</p>
-
         <div th:if="${delegatedAuthenticationProviderUrls}" th:class="'auth-provider-cards d-md-flex'">
 
             <th:block th:each="entry: ${delegatedAuthenticationProviderUrls}">

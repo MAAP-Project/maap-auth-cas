@@ -21,6 +21,10 @@
 <main role="main" class="container mt-3 mb-3">
     <div layout:fragment="content" class="row">
         <div id="notices" class="col-md mt-3 mt-md-0">
+            
+            <h1>MAAP Login</h1>
+            <p>You may login to MAAP using one of the services below.</p>
+
             <div th:replace="fragments/insecure :: insecure"><a href="fragments/insecure.html">insecure alert goes
                 here</a></div>
             <div th:replace="fragments/defaultauthn :: staticAuthentication">
