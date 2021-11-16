@@ -10219,7 +10219,7 @@
     -webkit-box-pack: center;
        -ms-flex-pack: center;
      justify-content: center;
-    padding: 16px 40px;
+    padding: 24px 40px 16px 40px;
     gap: 24px 24px;
   }
 
@@ -10262,3 +10262,9 @@
     background-color: #00549f;
   }
 
+  .privacy-caption {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    color: #6c757d;
+    caption-side: bottom;
+  }

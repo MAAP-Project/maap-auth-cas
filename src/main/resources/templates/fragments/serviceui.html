@@ -10,7 +10,7 @@
 </head>
 <body>
 <main role="main" class="container mt-3 mb-3">
-<div th:fragment="serviceUI" th:if="${registeredService}" id="serviceui" class="alert alert-info" style="background: #00549f">
+<div th:fragment="serviceUI" th:if="${registeredService}" id="serviceui">
     <div th:if="${serviceUIMetadata}">
         <table>
             <tr>
@@ -43,19 +43,8 @@
     </div>
 
     <div th:unless="${serviceUIMetadata}">
-        <table>
-            <tr>
-                <td id="servicedesc" style="text-align: left">
-                    <h5 th:text="${registeredService.name}">Registered Service Name</h5>
-                    <p th:text="${registeredService.description}">Registered Service Description</p>
-                </td>
-                <td>
-                    <img th:src="${registeredService.logo}" th:if="${registeredService.logo}"/>
-                   <!-- <img th:src="@{images/webapp.png}" th:unless="${registeredService.logo}"/>
-                   -->
-                </td>
-            </tr>
-        </table>
+        <div>to continue to <th:block th:text="${registeredService.name}">registeredService.name</th:block></div>
+        <div class="privacy-caption" th:text="${registeredService.description}">registeredService.description</div>
     </div>
 </div>
 </main>
