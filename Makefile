@@ -22,6 +22,9 @@ list-images: ## List images related to this project
 login-container: ## Open terminal window using running container
 	docker exec -it $(CONTAINER_NAME) /bin/bash
 
+open: ## open default browser to login selection interface
+	open https://localhost/cas/login
+
 remove-images: remove-containers	## Remove all images related to this project. Also removes project's containers.
 	docker image ls | awk '{print $$1}' | grep "${IMAGE_NAME}" | awk '{print $$1}' | xargs -I {} docker rmi -f {}
 
