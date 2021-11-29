@@ -33,6 +33,11 @@ rebuild-war: ## Builds war file and deploys it to Tomcat webapps folder
 	docker exec $(CAS_CONTAINER_NAME) cp /tmp/maap-auth-cas/build/libs/cas.war /opt/tomcat/webapps/
 	docker exec $(CAS_CONTAINER_NAME) supervisorctl restart cas
 
+save-war-cas:	##Builds war file and saves it to local filesystem
+	docker exec $(CAS_CONTAINER_NAME) /tmp/maap-auth-cas/gradlew clean build
+	mkdir -p build
+	docker cp $(CAS_CONTAINER_NAME):/tmp/maap-auth-cas/build/libs/cas.war ./build/
+
 remove-containers:  ## Remove all containers related to this project.
 	docker container ls --all | awk '{print $$2}' | grep "$(NAME_PREFIX)" | xargs -I {} docker rm -f {}
 
