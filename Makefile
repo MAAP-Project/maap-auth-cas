@@ -1,50 +1,71 @@
-export CONTAINER_NAME = maap-auth-cas
-export IMAGE_NAME = maap-auth-cas
+export NAME_PREFIX = maap-auth
+export APACHE_CONTAINER_NAME = $(NAME_PREFIX)-apache
+export CAS_CONTAINER_NAME = $(NAME_PREFIX)-cas
 export RUN_OPTIONS = 
 
-build-image:	## Build image
-	docker build --force-rm -t $(IMAGE_NAME) .
 
-build-image-verbose: ## Build Image and show verbose output
-	docker build --force-rm -t $(IMAGE_NAME) --progress=plain .
+build:	## Builds application for Docker Compose
+	docker-compose build
 
-rebuild-war: ## Builds war file and deploys it to Tomcat webapps folder
-	docker exec $(CONTAINER_NAME) /tmp/maap-auth-cas/gradlew clean build
-	docker exec $(CONTAINER_NAME) cp /tmp/maap-auth-cas/build/libs/cas.war /tomcat/tomcat-cas/webapps/
-	docker exec $(CONTAINER_NAME) supervisorctl restart tomcat
+build-nocache:	## Builds application for Docker Compose without the cache
+	docker-compose build --no-cache
+
+destroy:	## Stops running app locally and removes Docker container images requiring a rebuild
+	docker-compose down --rmi all
 
 list-containers: ## List containers related to this project
-	docker container ls --all --filter "ancestor=$(IMAGE_NAME)"
+	docker container ls --all --filter "ancestor=$(APACHE_CONTAINER_NAME)" --filter "ancestor=$(CAS_CONTAINER_NAME)"
 
 list-images: ## List images related to this project
-	docker images maap-auth-cas
+	docker images --filter=reference='$(NAME_PREFIX)*'
 
-login-container: ## Open terminal window using running container
-	docker exec -it $(CONTAINER_NAME) /bin/bash
+login-apache: ## Open terminal window using apache container
+	docker exec -it $(APACHE_CONTAINER_NAME) /bin/bash
+
+login-cas: ## Open terminal window using cas container
+	docker exec -it $(CAS_CONTAINER_NAME) /bin/bash
 
 open: ## open default browser to login selection interface
 	open https://localhost/cas/login
 
-remove-images: remove-containers	## Remove all images related to this project. Also removes project's containers.
-	docker image ls | awk '{print $$1}' | grep "${IMAGE_NAME}" | awk '{print $$1}' | xargs -I {} docker rmi -f {}
+rebuild-war: ## Builds war file and deploys it to Tomcat webapps folder
+	docker exec $(CAS_CONTAINER_NAME) /tmp/maap-auth-cas/gradlew clean build
+	docker exec $(CAS_CONTAINER_NAME) cp /tmp/maap-auth-cas/build/libs/cas.war /opt/tomcat/webapps/
+	docker exec $(CAS_CONTAINER_NAME) supervisorctl restart cas
 
 remove-containers:  ## Remove all containers related to this project.
-	docker ps -a | awk '{ print $$1,$$2 }' | grep "${CONTAINER_NAME}" | awk '{print $$1}' | xargs -I {} docker rm -f {}
+	docker container ls --all | awk '{print $$2}' | grep "$(NAME_PREFIX)" | xargs -I {} docker rm -f {}
 
-run-container: ## Run Container
-	docker run --name $(CONTAINER_NAME) $(RUN_OPTIONS) -v "$(PWD)/src:/tmp/maap-auth-cas/src" -p 443:443 $(IMAGE_NAME)
+remove-images: remove-containers	## Remove all images related to this project. This depends on also removing project's containers; otherwise this target will fail if containers reference any images.
+	docker images --all | awk '{print $$1}' | grep "${NAME_PREFIX}" | xargs -I {} docker rmi -f {}
 
-run-container-background: RUN_OPTIONS = "-d" ## Run container in background (detached mode)
-run-container-background: run-container
+restart:	## Restarts the application locally, does not reload environment variables
+	docker-compose restart
 
-start-container: ## Start Container
-	docker start $(CONTAINER_NAME)
+restart-apache:	## Restarts the Apache service
+	docker-compose restart apache
 
-stop-container: ## Stop Container
-	docker stop $(CONTAINER_NAME)
+restart-cas:	## Restarts the CAS service
+	docker-compose restart cas
 
-watch-containers: ## Watch running containers
+start:	## Starts up the application using Docker Compose
+	docker-compose up $(RUN_OPTIONS)
+
+start-detached:	RUN_OPTIONS = "-d" ## Starts up the application with Docker Compose in detached mode
+start-detached: start
+
+stop:	## Stops all running services
+	docker-compose stop
+
+stop-apache:	## Stops running Apache service
+	docker-compose stop apache
+
+stop-cas:	## Stops running CAS service
+	docker-compose stop cas
+
+watch-containers: ## Display a list of running containers that refreshes periodically
 	watch docker container ls
+
 
 # ----------------------------------------------------------------------------
 # Self-Documented Makefile
