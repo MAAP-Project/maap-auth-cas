@@ -16,6 +16,7 @@
     --teal: #20c997;
     --cyan: #17a2b8;
     --white: #fff;
+    --black: #000;
     --gray: #6c757d;
     --gray-dark: #343a40;
     --primary: #007bff;
@@ -64,11 +65,11 @@
   
   body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-family: "Merriweather", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.5;
-    color: white;
+    color: black;
     text-align: center;
     background-color: #fff;
   }
@@ -369,14 +370,17 @@
   h1, h2, h3, h4, h5, h6,
   .h1, .h2, .h3, .h4, .h5, .h6 {
     margin-bottom: 0.5rem;
-    font-family: inherit;
+    font-family: "Ropa Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     font-weight: 500;
     line-height: 1.2;
     color: inherit;
   }
   
   h1, .h1 {
-    font-size: 2.5rem;
+    font-size: 2.7rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    line-height: 52px;
   }
   
   h2, .h2 {
@@ -398,7 +402,7 @@
   h6, .h6 {
     font-size: 1rem;
   }
-  
+
   .lead {
     font-size: 1.25rem;
     font-weight: 300;
@@ -561,10 +565,24 @@
     margin-right: auto;
     margin-left: auto;
   }
+
+  @media (min-width: 0px) {
+    .container {
+      max-width: 400px;
+    }
+
+    body > .container {
+      padding-top: 80px !important;
+    }
+  }
   
   @media (min-width: 576px) {
     .container {
       max-width: 540px;
+    }
+
+    body > .container {
+      padding-top: 80px !important;
     }
   }
   
@@ -572,17 +590,29 @@
     .container {
       max-width: 720px;
     }
+
+    body > .container {
+      padding-top: 80px !important;
+    }
   }
   
   @media (min-width: 992px) {
     .container {
       max-width: 960px;
     }
+
+    body > .container {
+      padding-top: 120px !important;
+    }
   }
   
   @media (min-width: 1200px) {
     .container {
       max-width: 1140px;
+    }
+
+    body > .container {
+      padding-top: 120px !important;
     }
   }
   
@@ -10154,10 +10184,6 @@
     background-color: #fff;
   }
   
-  body > .container {
-    padding-top: 120px !important;
-  }
-  
   #cas-resource-list {
     background-color: #f8f9fa;
   }
@@ -10180,4 +10206,65 @@
   #insecureNotice.card {
     background-color: #ffc107;
     color: #212529;
+  }
+
+  .auth-provider-cards {
+    align-items: flex-start;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    flex-direction: row;
+    -webkit-box-pack: center;
+       -ms-flex-pack: center;
+     justify-content: center;
+    padding: 24px 40px 16px 40px;
+    gap: 24px 24px;
+  }
+
+  .auth-provider-card {
+    align-items: center;
+    background-color: #F8F9FA;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 0.25rem;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+       -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+       -ms-flex-direction: column;
+           flex-direction: column;
+    min-width: 350px;
+    padding: 16px;
+    transition: 0.15s;
+  }
+
+  .auth-provider-card:hover {
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+  }
+
+  .auth-provider-card .btn {
+    background-color: #00338D;
+    border-radius: 0.25rem;
+    color: white;
+    font-family: "Ropa Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-size: 1.3125rem;
+    font-weight: 400;
+    line-height: 150%;
+    padding: 10px 18px;
+    margin: 10px;
+    transition: 0.15s;
+  }
+
+  .auth-provider-card:hover .btn {
+    background-color: #00549f;
+  }
+
+  .privacy-caption {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    color: #6c757d;
+    caption-side: bottom;
   }

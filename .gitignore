@@ -19,3 +19,7 @@ bin/
 tmp/
 ./apache-tomcat
 apache-tomcat.zip
+apache/etc/ssl/certs/**
+apache/etc/ssl/private/**
+!apache/etc/ssl/certs/.gitkeep
+!apache/etc/ssl/private/.gitkeep

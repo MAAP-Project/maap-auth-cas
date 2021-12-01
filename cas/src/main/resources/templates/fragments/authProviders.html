@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <body>
+
+        <th:block th:fragment="URS (loginUrl, autoRedirect)">
+            <a th:href="@{${loginUrl}}" th:attr="autoredirect=${autoRedirect}" th:title="'Login with EarthData Account'" class="auth-provider-card">
+                <img src="images/urs-logo.png" th:alt-title="'EarthData Logo'" />
+                <span class="btn">Login with EarthData Account</span>
+            </a>
+        </th:block>
+
+
+        <th:block th:fragment="ESA (loginUrl, autoRedirect)">
+            <a th:href="@{${loginUrl}}" th:attr="autoredirect=${autoRedirect}" th:title="'Login with ESA Account'" class="auth-provider-card">
+                <img src="images/esa-logo.png" th:alt-title="'European Space Agency (ESA) Logo'" />
+                <span class="btn">Login with ESA Account</span>
+            </a>
+        </th:block>
+
+    </body>
+</html>

@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+
+  apache:
+    container_name: 'maap-auth-apache'
+    build:
+      dockerfile: Dockerfile
+      context: ./apache
+    depends_on:
+      - cas
+    image: 'maap-auth-apache'
+    ports:
+      - '443:443'
+    restart: on-failure
+
+  cas:
+    container_name: 'maap-auth-cas'
+    build:
+      dockerfile: Dockerfile
+      context: ./cas
+    image: 'maap-auth-cas'
+    ports:
+      - 11009:11009
+    restart: on-failure
+    volumes:
+      - "./cas/src:/tmp/maap-auth-cas/src"
