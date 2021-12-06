@@ -15,7 +15,11 @@
         <div th:if="${delegatedAuthenticationProviderUrls}" th:class="'auth-provider-cards d-md-flex'">
 
             <th:block th:each="entry: ${delegatedAuthenticationProviderUrls}">
-                <th:block th:insert="~{fragments/authProviders :: __${entry.name.toUpperCase()}__ (${entry.redirectUrl},${entry.autoRedirect})}"></th:block>
+
+                <th:block th:if="${entry.name.toUpperCase()} == 'ESA' OR ${entry.name.toUpperCase()} == 'URS'">
+                    <th:block th:insert="~{fragments/authProviders :: __${entry.name.toUpperCase()}__ (${entry.redirectUrl},${entry.autoRedirect})}"></th:block>
+                </th:block>
+
             </th:block>
 
         </div>
