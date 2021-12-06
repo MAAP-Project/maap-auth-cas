@@ -4,10 +4,10 @@ export CAS_CONTAINER_NAME = $(NAME_PREFIX)-cas
 export RUN_OPTIONS = 
 
 
-build:	## Builds application for Docker Compose
+build-images:	## Builds application for Docker Compose
 	docker-compose build
 
-build-nocache:	## Builds application for Docker Compose without the cache
+build-images-nocache:	## Builds application for Docker Compose without the cache
 	docker-compose build --no-cache
 
 destroy:	## Stops running app locally and removes Docker container images requiring a rebuild
