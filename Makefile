@@ -53,6 +53,9 @@ restart-apache:	## Restarts the Apache service
 restart-cas:	## Restarts the CAS service
 	docker-compose restart cas
 
+restart-cas-tomcat: ## Restarts the Tomcat instance running in the CAS container
+	docker exec $(CAS_CONTAINER_NAME) supervisorctl restart cas
+
 start:	## Starts up the application using Docker Compose
 	docker-compose up $(RUN_OPTIONS)
 
