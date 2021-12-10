@@ -61,7 +61,7 @@ Below are the installation steps used for setting up a local instance of the MAA
 
 Open a terminal window and run the following commands:
 
-1. Use the "MAAP Server Configuration" information, see below, to set up CAS configuratino information. Without this, you will not be able to run the application locally.
+1. Use the "MAAP Server Configuration" information, see below, to set up CAS configuration information. Without this, you will not be able to run the application locally.
 2. Build the Docker images
 ```
 make build
