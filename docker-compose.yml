@@ -11,7 +11,7 @@ services:
       - cas
     image: 'maap-auth-apache'
     ports:
-      - '443:443'
+      - '80:80'
     restart: on-failure
 
   cas:

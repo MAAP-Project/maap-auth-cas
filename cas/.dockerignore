@@ -1,3 +1,10 @@
+target/**
+build/**
+bin/**
+.idea/**
+.history/**
+.github/**
+.git/**
 **/.DS_Store
 **/.git*
 Dockerfile

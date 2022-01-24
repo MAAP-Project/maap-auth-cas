@@ -12,16 +12,12 @@
 <main role="main" class="container mt-3 mb-3">
     <div th:fragment="loginProviders" th:remove="tag">
 
-        <div th:if="${delegatedAuthenticationProviderUrls}" th:class="'auth-provider-cards d-md-flex'">
-
-            <th:block th:each="entry: ${delegatedAuthenticationProviderUrls}">
-
-                <th:block th:if="${entry.name.toUpperCase()} == 'ESA' OR ${entry.name.toUpperCase()} == 'URS'">
-                    <th:block th:insert="~{fragments/authProviders :: __${entry.name.toUpperCase()}__ (${entry.redirectUrl},${entry.autoRedirect})}"></th:block>
+        <div th:if="${delegatedAuthenticationProviderConfigurations}" th:class="'auth-provider-cards d-md-flex'">
+            <th:block th:each="entry: ${delegatedAuthenticationProviderConfigurations}">
+                <th:block th:if="${entry.name.toUpperCase()} == 'ESA' OR ${entry.name.toUpperCase()} == 'MAAPAUTH'"> 
+                    <th:block th:insert="~{fragments/authProviders :: __${entry.name.toLowerCase()}__ (${entry.redirectUrl},${entry.autoRedirect})}"></th:block>
                 </th:block>
-
             </th:block>
-
         </div>
 
         <script>
