@@ -50,15 +50,7 @@ RUN chmod 750 /opt/tomcat/webapps/cas.war
 ###########################################################################
 # Set up CAS configuration settings
 
-WORKDIR /etc/cas/config
-COPY ./etc/cas/config/* /etc/cas/config/
-RUN mkdir /etc/cas/services-repo
-WORKDIR /etc/cas/services-repo
-COPY ./etc/cas/services-repo/* /etc/cas/services-repo/
-WORKDIR /etc/cas
-COPY ./etc/cas/*.jwks /etc/cas/
-COPY ./etc/cas/*.key /etc/cas/
-COPY ./etc/cas/thekeystore /etc/cas/
+COPY ./etc/cas/ /etc/cas/
 
 ###########################################################################
 ###########################################################################

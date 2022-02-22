@@ -1,0 +1,74 @@
+{
+    @class: org.apereo.cas.services.RegexRegisteredService
+    serviceId: ^http.*
+    name: MAAP API
+    id: 8000
+    description: MAAP API 8000- wildcard.
+    evaluationOrder: 20
+    attributeReleasePolicy:
+    {
+      @class: org.apereo.cas.services.ReturnAllAttributeReleasePolicy
+      principalAttributesRepository:
+      {
+        @class: org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository
+        expiration: 2
+        timeUnit: HOURS
+        mergingStrategy: MULTIVALUED
+      }
+      authorizedToReleaseCredentialPassword: false
+      authorizedToReleaseProxyGrantingTicket: true
+      excludeDefaultAttributes: false
+      authorizedToReleaseAuthenticationAttributes: true
+    }
+    proxyPolicy:
+    {
+      @class: org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy
+      pattern: ^http.*
+    }
+    publicKey:
+    {
+      @class: org.apereo.cas.services.RegisteredServicePublicKeyImpl
+      location: /etc/cas/public.key
+      algorithm: RSA
+    }
+    usernameAttributeProvider:
+    {
+      @class: org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider
+      canonicalizationMode: NONE
+      encryptUsername: false
+    }
+    logoutType: FRONT_CHANNEL
+    accessStrategy:
+    {
+      @class: org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy
+      order: 0
+      enabled: true
+      ssoEnabled: true
+      delegatedAuthenticationPolicy:
+      {
+        @class: org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy
+      }
+      requireAllAttributes: false
+      caseInsensitive: true
+    }
+    bypassApprovalPrompt: true
+    generateRefreshToken: false
+    jsonFormat: true
+    jwks: /WEB-INF/classes/jwks/keystore.jwks
+    signIdToken: true
+    encryptIdToken: false
+    idTokenEncryptionAlg: A256GCMKW
+    idTokenEncryptionEncoding: A256GCM
+    subjectType: PUBLIC
+    dynamicallyRegistered: false
+    implicit: false
+    scopes:
+    [
+      java.util.HashSet
+      [
+        openid
+        profile
+        email
+      ]
+    ]
+  }
