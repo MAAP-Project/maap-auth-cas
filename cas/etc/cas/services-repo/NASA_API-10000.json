@@ -1,9 +1,9 @@
 {
     @class: org.apereo.cas.services.RegexRegisteredService
     serviceId: ^http.*
-    name: MAAP API
-    id: 8000
-    description: MAAP API 8000- wildcard.
+    name: NASA MAAP API
+    id: 10000
+    description: Multimission Algorithm and Analytics Platform
     evaluationOrder: 20
     attributeReleasePolicy:
     {
@@ -19,17 +19,6 @@
       authorizedToReleaseProxyGrantingTicket: true
       excludeDefaultAttributes: false
       authorizedToReleaseAuthenticationAttributes: true
-    }
-    proxyPolicy:
-    {
-      @class: org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy
-      pattern: ^http.*
-    }
-    publicKey:
-    {
-      @class: org.apereo.cas.services.RegisteredServicePublicKeyImpl
-      location: /etc/cas/public.key
-      algorithm: RSA
     }
     usernameAttributeProvider:
     {
@@ -51,6 +40,7 @@
       requireAllAttributes: false
       caseInsensitive: true
     }
+    logoutUrl: https://maap-environment.maap-project.org/wp-login.php?action=logout
     bypassApprovalPrompt: true
     generateRefreshToken: false
     jsonFormat: true

@@ -1,8 +1,9 @@
 {
     @class: org.apereo.cas.services.RegexRegisteredService
-    serviceId: https://dit.maap-project.org.*
+    serviceId: https://www.maap-environment.maap-project.org.*
     name: MAAP NASA Web Portal.
-    id: 456799
+    id: 00003
+    evaluationOrder: 3
     expirationPolicy:
     {
       @class: org.apereo.cas.services.DefaultRegisteredServiceExpirationPolicy
@@ -50,10 +51,10 @@
     multifactorPolicy:
     {
       @class: org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy
-      failureMode: NOT_SET
+      failureMode: NONE
       bypassEnabled: false
     }
-    logoutUrl: https://dit.maap-project.org/wp-login.php?action=logout
+    logoutUrl: https://www.maap-environment.maap-project.org/wp-login.php?action=logout
     accessStrategy:
     {
       @class: org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy

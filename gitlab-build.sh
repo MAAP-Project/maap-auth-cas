@@ -5,6 +5,7 @@ CAS_PROPS="cas/etc/cas/config/cas.properties"
 
 pushd maap-auth-cas
 
+# Update cas.properties with CI config variables
 echo "" >> ${CAS_PROPS}
 echo "cas.webflow.crypto.signing.key=${WEBFLOW_CRYPTO_SIGNING_KEY}" >> ${CAS_PROPS}
 echo "cas.webflow.crypto.encryption.key=${WEBFLOW_CRYPTO_ENCRYPTION_KEY}" >> ${CAS_PROPS}
@@ -23,16 +24,24 @@ echo "cas.authn.pac4j.oauth2[0].profile-attrs.gitlab_password=${GITLAB_PASSWORD}
 
 echo "cas.authn.pac4j.oidc[0].generic.id=${ESA_ID}" >> ${CAS_PROPS}
 echo "cas.authn.pac4j.oidc[0].generic.secret=${ESA_SECRET}" >> ${CAS_PROPS}
-echo "cas.authn.pac4j.oidc[0].generic.clientName=${ESA_CLIENT_NAME}" >> ${CAS_PROPS}
-echo "cas.authn.pac4j.oidc[0].generic.discoveryUri=${ESA_DISCOVERY_URI}" >> ${CAS_PROPS}
+
+echo "cas.authn.pac4j.oidc[1].generic.id=${ESA_API_ID}" >> ${CAS_PROPS}
+echo "cas.authn.pac4j.oidc[1].generic.secret=${ESA_API_SECRET}" >> ${CAS_PROPS}
+
+sed -i "s/casServerName/https:\/\/auth.$CAS_SERVER_NAME.maap-project.org/g" ${CAS_PROPS}
+sed -i "s/casDelegatedUrsName/https:\/\/$CAS_DELEGATED_URS_NAME/g" ${CAS_PROPS}
+
+# Update service definitions with CI config variables
+sed -i "s/maap-environment/$CAS_SERVER_NAME/g" $(find cas/etc/cas/services-repo/ -type f)
+sed -i "s/clientSecretValue/$ADE_CLIENT_SECRET/g" "cas/etc/cas/services-repo/NASA_ADE-00002.json"
+sed -i "s/clientIdValue/$ADE_CLIENT_ID/g" "cas/etc/cas/services-repo/NASA_ADE-00002.json"
+sed -i "s/clientSecretValue/$OAUTH_CLIENT_SECRET/g" "cas/etc/cas/services-repo/NASA_OAuth-33443.json"
+sed -i "s/clientIdValue/$OAUTH_CLIENT_ID/g" "cas/etc/cas/services-repo/NASA_OAuth-33443.json"
+
+sed -i "s/casDockerImage/mas.$CAS_SERVER_NAME.maap-project.org\/root\/auth-ci\/maap-auth-cas/g" "docker-compose-ci.yml"
 
 git log -1 > commit.txt
 cp -v ../*.key cas/etc/cas/
-
-sed -i "s/clientSecretValue/$ADE_CLIENT_SECRET/g" "cas/etc/cas/services-repo/NASA_ADE-1164.json"
-sed -i "s/clientIdValue/$ADE_CLIENT_ID/g" "cas/etc/cas/services-repo/NASA_ADE-1164.json"
-sed -i "s/clientSecretValue/$OAUTH_CLIENT_SECRET/g" "cas/etc/cas/services-repo/NASA_OAuth-3443.json"
-sed -i "s/clientIdValue/$OAUTH_CLIENT_ID/g" "cas/etc/cas/services-repo/NASA_OAuth-3443.json"
 
 docker-compose -f docker-compose-ci.yml build 
 docker push ${IMAGE_NAME}

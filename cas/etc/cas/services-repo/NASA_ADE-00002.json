@@ -1,9 +1,10 @@
 {
     @class: org.apereo.cas.services.RegexRegisteredService
-    serviceId: https://ade.dit.maap-project.org/auth/realms/che/broker/cas.*
+    serviceId: https://ade.maap-environment.maap-project.org/auth/realms/che/broker/cas.*
     name: NASA MAAP ADE
-    id: 1164
+    id: 00002
     description: NASA MAAP Algorithm Development Environment based on EclipseChe and JupyterLab
+    evaluationOrder: 2
     expirationPolicy:
     {
       @class: org.apereo.cas.services.DefaultRegisteredServiceExpirationPolicy
@@ -52,10 +53,10 @@
     multifactorPolicy:
     {
       @class: org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy
-      failureMode: NOT_SET
+      failureMode: NONE
       bypassEnabled: false
     }
-    logoutUrl: https://ade.dit.maap-project.org/auth/realms/che/protocol/openid-connect/logout
+    logoutUrl: https://ade.maap-environment.maap-project.org/auth/realms/che/protocol/openid-connect/logout
     accessStrategy:
     {
       @class: org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy

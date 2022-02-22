@@ -1,8 +1,9 @@
 {
     @class: org.apereo.cas.services.RegexRegisteredService
-    serviceId: https://repo.dit.maap-project.org/users/auth/cas3/callback.*
+    serviceId: https://repo.maap-environment.maap-project.org/users/auth/cas3/callback.*
     name: NASAGitLab
     id: 00001
+    evaluationOrder: 1
     description: MAAP MAS
     expirationPolicy:
     {
@@ -44,7 +45,7 @@
     multifactorPolicy:
     {
       @class: org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy
-      failureMode: NOT_SET
+      failureMode: NONE
       bypassEnabled: false
     }
     accessStrategy:
