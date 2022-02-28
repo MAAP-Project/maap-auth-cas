@@ -28,8 +28,8 @@ echo "cas.authn.pac4j.oidc[0].generic.secret=${ESA_SECRET}" >> ${CAS_PROPS}
 echo "cas.authn.pac4j.oidc[1].generic.id=${ESA_API_ID}" >> ${CAS_PROPS}
 echo "cas.authn.pac4j.oidc[1].generic.secret=${ESA_API_SECRET}" >> ${CAS_PROPS}
 
-sed -i "s/casServerName/https:\/\/auth.$CAS_SERVER_NAME.maap-project.org/g" ${CAS_PROPS}
-sed -i "s/casDelegatedUrsName/https:\/\/$CAS_DELEGATED_URS_NAME/g" ${CAS_PROPS}
+sed -i "s/maap-environment/$CAS_SERVER_NAME/g" ${CAS_PROPS}
+sed -i "s/cas-delegated-urs-name/$CAS_DELEGATED_URS_NAME/g" ${CAS_PROPS}
 
 # Update service definitions with CI config variables
 sed -i "s/maap-environment/$CAS_SERVER_NAME/g" $(find cas/etc/cas/services-repo/ -type f)
