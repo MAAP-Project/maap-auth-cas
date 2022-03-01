@@ -3,7 +3,6 @@
     serviceId: https://ade.maap-environment.maap-project.org/auth/realms/che/broker/cas.*
     name: Algorithm Development Environment (ADE)
     id: 00002
-    description: The NASA MAAP Algorithm Development Environment is based on Eclipse Che and JupyterLab.
     evaluationOrder: 2
     expirationPolicy:
     {

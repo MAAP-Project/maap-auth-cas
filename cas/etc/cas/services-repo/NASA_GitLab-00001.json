@@ -4,7 +4,6 @@
     name: MAAP GitLab
     id: 00001
     evaluationOrder: 1
-    description: MAAP GitLab hosts user-registered algorithms developed on the MAAP ADE.
     expirationPolicy:
     {
       @class: org.apereo.cas.services.DefaultRegisteredServiceExpirationPolicy
