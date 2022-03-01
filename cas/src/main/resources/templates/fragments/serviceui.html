@@ -43,8 +43,10 @@
     </div>
 
     <div th:unless="${serviceUIMetadata}">
-        <div>to continue to <th:block th:text="${registeredService.name}">registeredService.name</th:block></div>
-        <div class="privacy-caption" th:text="${registeredService.description}">registeredService.description</div>
+        <div style="margin-top: 20px;">
+            <div>to continue to the <th:block th:text="${registeredService.name}">registeredService.name</th:block></div>
+            <div class="privacy-caption" th:text="${registeredService.description}">registeredService.description</div>
+        </div>
     </div>
 </div>
 </main>

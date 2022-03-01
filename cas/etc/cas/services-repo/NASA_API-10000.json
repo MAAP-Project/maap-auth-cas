@@ -1,0 +1,64 @@
+{
+    @class: org.apereo.cas.services.RegexRegisteredService
+    serviceId: ^http.*
+    name: NASA MAAP API
+    id: 10000
+    description: Multimission Algorithm and Analytics Platform
+    evaluationOrder: 20
+    attributeReleasePolicy:
+    {
+      @class: org.apereo.cas.services.ReturnAllAttributeReleasePolicy
+      principalAttributesRepository:
+      {
+        @class: org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository
+        expiration: 2
+        timeUnit: HOURS
+        mergingStrategy: MULTIVALUED
+      }
+      authorizedToReleaseCredentialPassword: false
+      authorizedToReleaseProxyGrantingTicket: true
+      excludeDefaultAttributes: false
+      authorizedToReleaseAuthenticationAttributes: true
+    }
+    usernameAttributeProvider:
+    {
+      @class: org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider
+      canonicalizationMode: NONE
+      encryptUsername: false
+    }
+    logoutType: FRONT_CHANNEL
+    accessStrategy:
+    {
+      @class: org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy
+      order: 0
+      enabled: true
+      ssoEnabled: true
+      delegatedAuthenticationPolicy:
+      {
+        @class: org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy
+      }
+      requireAllAttributes: false
+      caseInsensitive: true
+    }
+    logoutUrl: https://maap-environment.maap-project.org/wp-login.php?action=logout
+    bypassApprovalPrompt: true
+    generateRefreshToken: false
+    jsonFormat: true
+    jwks: /WEB-INF/classes/jwks/keystore.jwks
+    signIdToken: true
+    encryptIdToken: false
+    idTokenEncryptionAlg: A256GCMKW
+    idTokenEncryptionEncoding: A256GCM
+    subjectType: PUBLIC
+    dynamicallyRegistered: false
+    implicit: false
+    scopes:
+    [
+      java.util.HashSet
+      [
+        openid
+        profile
+        email
+      ]
+    ]
+  }

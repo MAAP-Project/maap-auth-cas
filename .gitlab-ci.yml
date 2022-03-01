@@ -1,0 +1,15 @@
+build_image:
+  stage: build
+
+  before_script:
+  - docker info
+  
+  script:
+    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" "$CI_REGISTRY"
+    - ./gitlab-build.sh
+
+  tags:
+    - shell
+
+  only:
+   - main

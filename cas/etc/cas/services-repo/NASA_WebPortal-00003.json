@@ -1,0 +1,86 @@
+{
+  @class: org.apereo.cas.services.RegexRegisteredService
+  serviceId: https://maap-environment.maap-project.org.*
+  name: MAAP NASA Web Portal
+  id: 00003
+  evaluationOrder: 3
+  expirationPolicy:
+  {
+    @class: org.apereo.cas.services.DefaultRegisteredServiceExpirationPolicy
+    deleteWhenExpired: false
+    notifyWhenDeleted: false
+  }
+  proxyPolicy:
+  {
+    @class: org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy
+    pattern: ^http.*
+  }
+  publicKey:
+  {
+    @class: org.apereo.cas.services.RegisteredServicePublicKeyImpl
+    location: /etc/cas/public-portal.key
+    algorithm: RSA
+  }
+  evaluationOrder: 10
+  usernameAttributeProvider:
+  {
+    @class: org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider
+    canonicalizationMode: NONE
+    encryptUsername: false
+  }
+  logoutType: FRONT_CHANNEL
+  attributeReleasePolicy:
+  {
+    @class: org.apereo.cas.services.ReturnAllAttributeReleasePolicy
+    principalAttributesRepository:
+    {
+      @class: org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository
+      expiration: 2
+      timeUnit: HOURS
+    }
+    consentPolicy:
+    {
+      @class: org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy
+      enabled: false
+    }
+    authorizedToReleaseCredentialPassword: false
+    authorizedToReleaseProxyGrantingTicket: false
+    excludeDefaultAttributes: false
+    authorizedToReleaseAuthenticationAttributes: true
+  }
+
+  logoutUrl: https://maap-environment.maap-project.org/wp-login.php?action=logout
+  accessStrategy:
+  {
+    @class: org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy
+    order: 0
+    enabled: true
+    ssoEnabled: true
+    delegatedAuthenticationPolicy:
+    {
+      @class: org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy
+    }
+    requireAllAttributes: false
+    caseInsensitive: true
+  }
+  bypassApprovalPrompt: true
+  generateRefreshToken: false
+  jsonFormat: true
+  jwks: /WEB-INF/classes/jwks/keystore.jwks
+  signIdToken: true
+  encryptIdToken: false
+  idTokenEncryptionAlg: A256GCMKW
+  idTokenEncryptionEncoding: A256GCM
+  subjectType: PUBLIC
+  dynamicallyRegistered: false
+  implicit: false
+  scopes:
+  [
+    java.util.HashSet
+    [
+      openid
+      profile
+      email
+    ]
+  ]
+}

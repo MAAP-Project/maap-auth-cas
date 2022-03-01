@@ -1,0 +1,44 @@
+{
+    @class: org.apereo.cas.support.oauth.services.OAuthRegisteredService
+    serviceId: oauthNasaMaap
+    name: ESA Oauth Service
+    id: 33443
+    evaluationOrder: 7
+    clientSecret: clientSecretValue
+    clientId: clientIdValue
+    bypassApprovalPrompt: true
+    supportedGrantTypes: 
+    [
+      java.util.HashSet 
+      [ 
+        authorization_code 
+        password 
+      ] 
+    ]
+    supportedResponseTypes: 
+    [ 
+      java.util.HashSet 
+      [ 
+        code
+        token
+        id_token
+      ] 
+    ]
+    scopes:
+    [
+      java.util.HashSet
+      [
+        openid
+        custom
+        profile
+        email
+      ]
+    ]
+    requiredHandlers:
+    [
+      java.util.HashSet
+      [
+        Urs4Handler
+      ]
+    ]
+  }

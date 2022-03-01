@@ -1,8 +1,8 @@
 FROM ubuntu:18.04
-LABEL maintainer="anil.natha@jpl.nasa.gov"
+LABEL maintainer="support@maap-project.org"
 LABEL version="0.0.1"
 
-RUN apt-get update && apt-get install -y default-jdk supervisor curl && rm -rf /var/lib/apt/lists/* && apt-get clean
+RUN apt-get update && apt-get install -y default-jdk supervisor curl vim && rm -rf /var/lib/apt/lists/* && apt-get clean
 
 ###########################################################################
 ###########################################################################
@@ -33,7 +33,15 @@ RUN chown -R tomcat webapps/ work temp/ logs
 
 WORKDIR /tmp/maap-auth-cas
 COPY . ./
-RUN ./gradlew clean build
+
+RUN mkdir -p ~/.gradle \
+    && echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties \
+    && echo "org.gradle.configureondemand=true" >> ~/.gradle/gradle.properties \
+    && chmod 750 ./gradlew \
+    && ./gradlew --version;
+
+RUN ./gradlew clean build --parallel --no-daemon
+RUN ./gradlew createKeystore
 RUN cp ./build/libs/cas.war /opt/tomcat/webapps/
 RUN chown tomcat:tomcat /opt/tomcat/webapps/cas.war
 RUN chmod 750 /opt/tomcat/webapps/cas.war
@@ -42,10 +50,7 @@ RUN chmod 750 /opt/tomcat/webapps/cas.war
 ###########################################################################
 # Set up CAS configuration settings
 
-WORKDIR /etc/cas/config
-COPY ./etc/cas/config/* /etc/cas/config
-
-RUN mkdir /etc/cas/services-repo
+COPY ./etc/cas/ /etc/cas/
 
 ###########################################################################
 ###########################################################################
