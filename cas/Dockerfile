@@ -1,5 +1,5 @@
 FROM ubuntu:18.04
-LABEL maintainer="anil.natha@jpl.nasa.gov"
+LABEL maintainer="support@maap-project.org"
 LABEL version="0.0.1"
 
 RUN apt-get update && apt-get install -y default-jdk supervisor curl vim && rm -rf /var/lib/apt/lists/* && apt-get clean

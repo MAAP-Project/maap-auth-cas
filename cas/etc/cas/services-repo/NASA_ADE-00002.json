@@ -1,9 +1,9 @@
 {
     @class: org.apereo.cas.services.RegexRegisteredService
     serviceId: https://ade.maap-environment.maap-project.org/auth/realms/che/broker/cas.*
-    name: NASA MAAP ADE
+    name: Algorithm Development Environment (ADE)
     id: 00002
-    description: NASA MAAP Algorithm Development Environment based on EclipseChe and JupyterLab
+    description: The NASA MAAP Algorithm Development Environment is based on Eclipse Che and JupyterLab.
     evaluationOrder: 2
     expirationPolicy:
     {

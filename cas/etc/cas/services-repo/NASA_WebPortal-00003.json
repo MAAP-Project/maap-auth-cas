@@ -1,7 +1,7 @@
 {
   @class: org.apereo.cas.services.RegexRegisteredService
   serviceId: https://maap-environment.maap-project.org.*
-  name: MAAP NASA Web Portal.
+  name: MAAP NASA Web Portal
   id: 00003
   evaluationOrder: 3
   expirationPolicy:

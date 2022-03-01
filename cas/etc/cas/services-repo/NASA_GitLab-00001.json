@@ -1,10 +1,10 @@
 {
     @class: org.apereo.cas.services.RegexRegisteredService
     serviceId: https://repo.maap-environment.maap-project.org/users/auth/cas3/callback.*
-    name: NASAGitLab
+    name: MAAP GitLab
     id: 00001
     evaluationOrder: 1
-    description: MAAP MAS
+    description: MAAP GitLab hosts user-registered algorithms developed on the MAAP ADE.
     expirationPolicy:
     {
       @class: org.apereo.cas.services.DefaultRegisteredServiceExpirationPolicy
