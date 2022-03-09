@@ -288,24 +288,15 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
     //Add user to GitLab, and update Syncope with the GitLab access token and Id.
     private void syncWithGitLab(String syncope_uid, String uid, String username, String firstName, String lastName) throws URISyntaxException, IOException  {
         final HttpClientBuilder builder = HttpClientBuilder.create();
-        final CloseableHttpClient client = builder.build();
-        
-        
-        URIBuilder uriBuilderGet = new URIBuilder(gitlab_url + "/users?username=" + uid);
-        URI uriGet = uriBuilderGet.build();
-   
-        HttpUriRequest requestGet = new HttpGet(uriGet);
-        requestGet.addHeader("Accept", "application/json");
-        requestGet.addHeader("Content-Type", "application/json");
-        requestGet.addHeader("PRIVATE-TOKEN", gitlab_password);
-   
-        final CloseableHttpResponse getResponse = client.execute(requestGet);
-        final HttpEntity getResponseEntity = getResponse.getEntity();
-        
-        byte[] byteResult = EntityUtils.toByteArray(getResponseEntity);
-        String result = new String(byteResult, "ISO-8859-2");
-        responseClose(getResponse);
-        JSONArray jArray = (JSONArray) new JSONTokener(result).nextValue();
+        final CloseableHttpClient client = builder.build();  
+        JSONArray jArray = new JSONArray();
+
+        //Lookup user by EDL username
+        jArray = findGitLabUser("/users?username=" + uid);
+
+        //If no match found, try searching by username (email)
+        if(jArray.length() == 0) 
+            jArray = findGitLabUser("/users?search=" + username);
         
         //If user doesn't exist in GitLab, create an account
         if(jArray.length() == 0) {
@@ -329,8 +320,8 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
             final CloseableHttpResponse response = client.execute(requestPost);
             final HttpEntity responseEntity = response.getEntity();
        
-            byteResult = EntityUtils.toByteArray(responseEntity);
-            result = new String(byteResult, "ISO-8859-2");
+            byte[] byteResult = EntityUtils.toByteArray(responseEntity);
+            String result = new String(byteResult, "ISO-8859-2");
             responseClose(response);
             JSONObject jsonOutput = new JSONObject(result);
             int gitLabId = jsonOutput.getInt("id");
@@ -383,6 +374,29 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
             ((HttpPatch) requestPatch).setEntity(new StringEntity(syncopePatchBody));
             client.execute(requestPatch);
         }  
+    }
+
+    private JSONArray findGitLabUser(String query) throws URISyntaxException, IOException {
+        final HttpClientBuilder builder = HttpClientBuilder.create();
+        final CloseableHttpClient client = builder.build();        
+        
+        URIBuilder uriBuilderGet = new URIBuilder(gitlab_url + query);
+        URI uriGet = uriBuilderGet.build();
+   
+        HttpUriRequest requestGet = new HttpGet(uriGet);
+        requestGet.addHeader("Accept", "application/json");
+        requestGet.addHeader("Content-Type", "application/json");
+        requestGet.addHeader("PRIVATE-TOKEN", gitlab_password);
+   
+        final CloseableHttpResponse getResponse = client.execute(requestGet);
+        final HttpEntity getResponseEntity = getResponse.getEntity();
+        
+        byte[] byteResult = EntityUtils.toByteArray(getResponseEntity);
+        String result = new String(byteResult, "ISO-8859-2");
+        responseClose(getResponse);
+        JSONArray jArray = (JSONArray) new JSONTokener(result).nextValue();
+
+        return jArray;
     }
    
     private String createGitLabImpersonationToken(String uid) throws URISyntaxException, ClientProtocolException, IOException {
