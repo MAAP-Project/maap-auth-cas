@@ -27,6 +27,7 @@
                 <div th:fragment="loginform" class="d-flex flex-column justify-content-between m-auto"
                 th:with="loginFormEnabled=${#strings.defaultString(#themes.code('cas.login-form.enabled'), 'true') == 'true'},
                        loginFormViewable=${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}">
+                </div>
             </div>
         </div>
     </main>
