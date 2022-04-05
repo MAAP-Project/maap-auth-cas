@@ -514,12 +514,7 @@ cas.standard.js.file=/themes/${theme}/js/cas.js
 
 springBoot {
     buildInfo()
-
-    mainClassName = "org.apereo.cas.web.CasWebApplication"
-
-
-
-
+    mainClass = "org.apereo.cas.web.CasWebApplication"
 }
 
 sourceSets {
