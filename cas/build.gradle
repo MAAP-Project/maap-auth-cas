@@ -86,6 +86,10 @@ dependencies {
     } else {
         implementation "org.apereo.cas:cas-server-webapp:${project.'cas.version'}"
     }
+
+    implementation "com.github.scribejava:scribejava-core:${project.'scribejavaVersion'}"
+    implementation "com.github.scribejava:scribejava-apis:${project.'scribejavaVersion'}"
+
     implementation "org.apereo.cas:cas-server-support-pac4j-webflow:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-support-pac4j-core:${project.'cas.version'}" 
     implementation "org.apereo.cas:cas-server-support-pac4j-authentication:${project.'cas.version'}" 
