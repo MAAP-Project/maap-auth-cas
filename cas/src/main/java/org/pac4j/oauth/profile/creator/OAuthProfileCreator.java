@@ -106,7 +106,7 @@ abstract class OAuthProfileCreator implements ProfileCreator {
             throw new HttpCommunicationException("No data found for accessToken: " + accessToken);
         }
         final UserProfile profile = configuration.getProfileDefinition().extractUserProfile(body);
-        addAccessTokenToProfile(profile, accessToken);
+        addTokenToProfile(profile, accessToken);
         return Optional.of(profile);
     }
     
@@ -178,5 +178,5 @@ abstract class OAuthProfileCreator implements ProfileCreator {
      * @param profile     the user profile
      * @param accessToken the access token
      */
-    protected abstract void addAccessTokenToProfile(final UserProfile profile, final Token accessToken);
+    protected abstract void addTokenToProfile(final UserProfile profile, final Token accessToken);
 }
