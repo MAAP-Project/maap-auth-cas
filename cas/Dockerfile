@@ -12,12 +12,12 @@ RUN groupadd tomcat
 RUN useradd -s /bin/false -g tomcat -d /home/tomcat tomcat
 
 WORKDIR /tmp
-RUN curl -O https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.54/bin/apache-tomcat-9.0.54.tar.gz
-ENV SHA=83430f24d42186ce2ff51eeef2f7a5517048f37d9050c45cac1e3dba8926d61a1f7f5aba122a34a11ac1dbdd3c1f6d98671841047df139394d43751263de57c3
-RUN echo "${SHA} /tmp/apache-tomcat-9.0.54.tar.gz" | sha512sum -c -
+RUN curl -O https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.62/bin/apache-tomcat-9.0.62.tar.gz
+ENV SHA=179af1d50a7d330d0842d3f1cae086bbc1b20e8f6752d66500663f3ac71d80f50113bbd29931e21c8e2eccd982f9f872e193364311316fdd67349130d440c83f
+RUN echo "${SHA} /tmp/apache-tomcat-9.0.62.tar.gz" | sha512sum -c -
 
 RUN mkdir /opt/tomcat
-RUN tar -xzvf apache-tomcat-9.0.54.tar.gz -C /opt/tomcat --strip-components=1
+RUN tar -xzvf apache-tomcat-9.0.62.tar.gz -C /opt/tomcat --strip-components=1
 
 WORKDIR /opt/tomcat
 COPY ./opt/tomcat/conf/tomcat-cas-server.xml /opt/tomcat/conf/server.xml
