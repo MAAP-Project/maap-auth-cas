@@ -62,6 +62,11 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
     public static final String STUDY_AREA = "study_area";
     public static final String ORGANIZATION = "organization";
     public static final String AFFILIATION = "affiliation";
+    public static final String STATUS = "status";
+    public static final String STATUS_ACTIVE = "active";
+    public static final String STATUS_SUSPENDED = "suspended";
+    public static final String CLIENT_ESA = "ESA";    
+    public static final String CLIENT_NASA = "maapauth";    
     public static final String CUSTOM_SYNCOPE_EMAIL_WHITELIST = "syncope_email_whitelist";
     public static final String CUSTOM_SYNCOPE_USER = "syncope_user";
     public static final String CUSTOM_SYNCOPE_PASSWORD = "syncope_password";
@@ -128,15 +133,34 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
         }  
         
         try {
-			syncWithSyncope((String)profile.getAttribute("preferred_username"), profile.getUsername(), profile.getFirstName(), profile.getFamilyName());
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+            syncWithSyncope((String)profile.getAttribute("preferred_username"), profile.getUsername(), profile.getFirstName(), profile.getFamilyName());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         
         return profile;
     }
+    
+    // private void applyMaapAttributes(OAuth20Profile profile) {        
+    // 	String clientName = profile.getClientName() != null ? profile.getClientName() : "";
+    	
+    // 	if(clientName.equals(CLIENT_NASA)) {
+    //         try {
+    // 			syncWithSyncope((String)profile.getAttribute("preferred_username"), profile.getUsername(), profile.getFirstName(), profile.getFamilyName());
+    // 		} catch (URISyntaxException e) {
+    // 			e.printStackTrace();
+    // 		} catch (IOException e) {
+    // 			e.printStackTrace();
+    // 		}
+    // 	} else if (clientName.equals(CLIENT_ESA)) {
+    // 		//Add 'status=active' attribute to profile. ESA users are assumed to be pre-approved.
+    //         convertAndAdd(profile, PROFILE_ATTRIBUTE, STATUS, STATUS_ACTIVE);
+    // 	} else {
+    // 		 raiseProfileExtractionJsonError("No valid client name found.");
+    // 	}
+    // }
     
     private void assignCustomAttribute(String key, String value) {
     	switch(key) {
