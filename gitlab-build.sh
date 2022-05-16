@@ -11,15 +11,12 @@ echo "cas.webflow.crypto.signing.key=${WEBFLOW_CRYPTO_SIGNING_KEY}" >> ${CAS_PRO
 echo "cas.webflow.crypto.encryption.key=${WEBFLOW_CRYPTO_ENCRYPTION_KEY}" >> ${CAS_PROPS}
 echo "cas.tgc.crypto.signing.key=${TGC_CRYPTO_SIGNING_KEY}" >> ${CAS_PROPS}
 echo "cas.tgc.crypto.encryption.key=${TGC_CRYPTO_ENCRYPTION_KEY}" >> ${CAS_PROPS}
-echo "cas.authn.attributeRepository.rest[0].basicAuthUsername=${SYNCOPE_USERNAME}" >> ${CAS_PROPS}
-echo "cas.authn.attributeRepository.rest[0].basicAuthPassword=${SYNCOPE_PASSWORD}" >> ${CAS_PROPS}
 
 echo "cas.authn.pac4j.oauth2[0].id=${URS_KEY}" >> ${CAS_PROPS}
 echo "cas.authn.pac4j.oauth2[0].custom-params.urs4_key=${URS_KEY}" >> ${CAS_PROPS}
 echo "cas.authn.pac4j.oauth2[0].secret=${URS_SECRET}" >> ${CAS_PROPS}
 echo "cas.authn.pac4j.oauth2[0].profile-attrs.syncope_email_whitelist=${SYNCOPE_EMAIL_WHITELIST}" >> ${CAS_PROPS}
-echo "cas.authn.pac4j.oauth2[0].profile-attrs.syncope_user=${SYNCOPE_USERNAME}" >> ${CAS_PROPS}
-echo "cas.authn.pac4j.oauth2[0].profile-attrs.syncope_password=${SYNCOPE_PASSWORD}" >> ${CAS_PROPS}
+echo "cas.authn.pac4j.oauth2[0].profile-attrs.cas_key=${CAS_SECRET_KEY}" >> ${CAS_PROPS}
 echo "cas.authn.pac4j.oauth2[0].profile-attrs.gitlab_password=${GITLAB_PASSWORD}" >> ${CAS_PROPS}
 
 echo "cas.authn.pac4j.oidc[0].generic.id=${ESA_ID}" >> ${CAS_PROPS}

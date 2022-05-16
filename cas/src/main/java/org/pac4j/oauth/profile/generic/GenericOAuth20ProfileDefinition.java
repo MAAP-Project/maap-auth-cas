@@ -53,7 +53,6 @@ import java.util.Arrays;
  */
 public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
     private final ObjectMapper jacksonObjectMapper = new ObjectMapper().findAndRegisterModules();
-    private final String DEFAULT_PASSWORD = "HELLO123.";
 
     public static final String UID = "uid";
     public static final String EMAIL_ADDRESS = "email_address";
@@ -68,16 +67,14 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
     public static final String CLIENT_ESA = "ESA";    
     public static final String CLIENT_NASA = "maapauth";    
     public static final String CUSTOM_SYNCOPE_EMAIL_WHITELIST = "syncope_email_whitelist";
-    public static final String CUSTOM_SYNCOPE_USER = "syncope_user";
-    public static final String CUSTOM_SYNCOPE_PASSWORD = "syncope_password";
-    public static final String CUSTOM_SYNCOPE_URL = "syncope_url";
+    public static final String CUSTOM_CAS_KEY = "cas_key";
+    public static final String CUSTOM_MAAP_API_URL = "maap_api_url";
     public static final String CUSTOM_GITLAB_PASSWORD = "gitlab_password";
     public static final String CUSTOM_GITLAB_URL = "gitlab_url";
     
     private String syncope_email_whitelist;
-    private String syncope_user;
-    private String syncope_password;
-    private String syncope_url;
+    private String cas_key;
+    private String maap_api_url;
     private String gitlab_password;
     private String gitlab_url;
 
@@ -133,7 +130,14 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
         }  
         
         try {
-            syncWithSyncope((String)profile.getAttribute("preferred_username"), profile.getUsername(), profile.getFirstName(), profile.getFamilyName());
+            Boolean isActive = userIsActive((String)profile.getAttribute("preferred_username"));
+
+            convertAndAdd(profile, PROFILE_ATTRIBUTE, STATUS, isActive ? STATUS_ACTIVE : STATUS_SUSPENDED);
+
+//             if(isActive) {
+//                 syncWithGitLab(syncope_uid, (String)profile.getAttribute("preferred_username"), profile.getUsername(), profile.getFirstName(), profile.getFamilyName());
+//             }
+            
         } catch (URISyntaxException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -173,14 +177,11 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
     	  case CUSTOM_SYNCOPE_EMAIL_WHITELIST:
       	    syncope_email_whitelist = value;
       	    break;
-    	  case CUSTOM_SYNCOPE_PASSWORD:
-      	    syncope_password = value;
+    	  case CUSTOM_CAS_KEY:
+      	    cas_key = value;
       	    break;
-    	  case CUSTOM_SYNCOPE_URL:
-      	    syncope_url = value;
-      	    break;
-    	  case CUSTOM_SYNCOPE_USER:
-      	    syncope_user = value;
+    	  case CUSTOM_MAAP_API_URL:
+      	    maap_api_url = value;
       	    break;
     	  default:
     	    break;
@@ -225,90 +226,32 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
         this.firstNodePath = firstNodePath;
     }
 
-    
-    private void syncWithSyncope(String uid, String username, String firstName, String lastName) throws URISyntaxException, IOException  {
+    public Boolean userIsActive(final String username) throws URISyntaxException, IOException {
+
+        if(emailWhitelisted(username, syncope_email_whitelist)) {
+            return true;
+        }
+
         final HttpClientBuilder builder = HttpClientBuilder.create();
         final HttpClient client = builder.build();
    
-        String encoding = java.util.Base64.getEncoder().encodeToString((syncope_user + ":" + syncope_password).getBytes());
-        URIBuilder uriBuilder = new URIBuilder(syncope_url + "/users/" + username);
+        URIBuilder uriBuilder = new URIBuilder(maap_api_url + "/members/" + username);
         URI uri = uriBuilder.build();
         HttpUriRequest request = new HttpGet(uri);
-        request.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + encoding);
+        request.setHeader("cas-authorization", cas_key);
         HttpResponse response = client.execute(request);
    
         Map attributes = jacksonObjectMapper.readValue(response.getEntity().getContent(), Map.class);
         
-        Boolean activeUser = false; 
-   
-        //If no user was found, add the user now to Syncope
-        if(attributes.get("status") != null && attributes.get("status").toString().equals("404")) {
-            URIBuilder uriBuilderPost = new URIBuilder(syncope_url + "/users");
-            URI uriPost = uriBuilderPost.build();
-   
-            HttpUriRequest requestPost = new HttpPost(uriPost);
-            requestPost.addHeader("Accept", "application/json");
-            requestPost.addHeader("Content-Type", "application/json");
-            requestPost.addHeader("X-Syncope-Domain", "Master");
-            requestPost.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + encoding);
-   
-            ((HttpPost) requestPost).setEntity(new StringEntity(
-                    "{ "
-                            + "\"@class\": \"org.apache.syncope.common.lib.to.UserTO\", "
-                            + "\"username\" : \"" + username + "\", "
-                            + "\"password\" : \"" + DEFAULT_PASSWORD + "\", "
-                            + "\"realm\" : \"/\", "
-                            + "\"status\" : \"active\", "
-                            + "\"auxClasses\" : [], "
-                            + "\"plainAttrs\" : [\n" +
-                            "    {\n" +
-                            "      \"schema\": \"family_name\",\n" +
-                            "      \"values\": [\n" +
-                            "        \"" + lastName + "\"\n" +
-                            "      ]\n" +
-                            "    },\n" +
-                            "    {\n" +
-                            "      \"schema\": \"given_name\",\n" +
-                            "      \"values\": [\n" +
-                            "        \"" + firstName + "\"\n" +
-                            "      ]\n" +
-                            "    },\n" +
-                            "    {\n" +
-                            "      \"schema\": \"display_name\",\n" +
-                            "      \"values\": [\n" +
-                            "        \"" + firstName + " " + lastName + "\"\n" +
-                            "      ]\n" +
-                            "    },\n" +
-                            "    {\n" +
-                            "      \"schema\": \"email\",\n" +
-                            "      \"values\": [\n" +
-                            "        \"" + username + "\"\n" +
-                            "      ]\n" +
-                            "    }\n" +
-                            "  ], "
-                            + "\"derAttrs\" : [], "
-                            + "\"virAttrs\" : [], "
-                            + "\"resources\" : []"
-                            + "}"));
-   
-            client.execute(requestPost);
-   
-            if(emailWhitelisted(username, syncope_email_whitelist)) 
-            	activeUser = true;
-            else
-                suspendUser(client, uid, syncope_url, encoding);
-            
-        } 
-        else if (attributes.get("status") != null && attributes.get("status").toString().equals("active")) {
-        	activeUser = true;
-        }
+        Boolean activeUser = response.getStatusLine().getStatusCode() == 200 && attributesContainActiveStatus(attributes); 
         
-        if(activeUser) {
-        	String syncope_uid = getUidForUser(client, syncope_url, encoding, username);
-            syncWithGitLab(syncope_uid, uid, username, firstName, lastName);
-        }
+        return activeUser;
     }
-   
+    
+    private Boolean attributesContainActiveStatus(Map attributes) {
+    	return attributes.get("status") != null && attributes.get("status").equals(STATUS_ACTIVE);
+    }
+    
     //Add user to GitLab, and update Syncope with the GitLab access token and Id.
     private void syncWithGitLab(String syncope_uid, String uid, String username, String firstName, String lastName) throws URISyntaxException, IOException  {
         final HttpClientBuilder builder = HttpClientBuilder.create();
@@ -322,82 +265,82 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
         if(jArray.length() == 0) 
             jArray = findGitLabUser("/users?search=" + username);
         
-        //If user doesn't exist in GitLab, create an account
-        if(jArray.length() == 0) {
-            URIBuilder uriBuilderPost = new URIBuilder(gitlab_url + "/users");
-            URI uriPost = uriBuilderPost.build();
+        // //If user doesn't exist in GitLab, create an account
+        // if(jArray.length() == 0) {
+        //     URIBuilder uriBuilderPost = new URIBuilder(gitlab_url + "/users");
+        //     URI uriPost = uriBuilderPost.build();
        
-            HttpUriRequest requestPost = new HttpPost(uriPost);
-            requestPost.addHeader("Accept", "application/json");
-            requestPost.addHeader("Content-Type", "application/json");
-            requestPost.addHeader("PRIVATE-TOKEN", gitlab_password);
+        //     HttpUriRequest requestPost = new HttpPost(uriPost);
+        //     requestPost.addHeader("Accept", "application/json");
+        //     requestPost.addHeader("Content-Type", "application/json");
+        //     requestPost.addHeader("PRIVATE-TOKEN", gitlab_password);
        
-            ((HttpPost) requestPost).setEntity(new StringEntity(
-                    "{ "
-                    + "\"username\" : \"" + uid + "\", "
-                    + "\"password\" : \"" + Double.toString(Math.random()) + "\", "
-                    + "\"name\" : \"" + firstName + " " + lastName + "\", "
-                    + "\"email\" : \"" + username + "\", "
-                    + "\"skip_confirmation\" : true"
-                    + "}"));
+        //     ((HttpPost) requestPost).setEntity(new StringEntity(
+        //             "{ "
+        //             + "\"username\" : \"" + uid + "\", "
+        //             + "\"password\" : \"" + Double.toString(Math.random()) + "\", "
+        //             + "\"name\" : \"" + firstName + " " + lastName + "\", "
+        //             + "\"email\" : \"" + username + "\", "
+        //             + "\"skip_confirmation\" : true"
+        //             + "}"));
        
-            final CloseableHttpResponse response = client.execute(requestPost);
-            final HttpEntity responseEntity = response.getEntity();
+        //     final CloseableHttpResponse response = client.execute(requestPost);
+        //     final HttpEntity responseEntity = response.getEntity();
        
-            byte[] byteResult = EntityUtils.toByteArray(responseEntity);
-            String result = new String(byteResult, "ISO-8859-2");
-            responseClose(response);
-            JSONObject jsonOutput = new JSONObject(result);
-            int gitLabId = jsonOutput.getInt("id");
-            String strGitLabId = String.valueOf(gitLabId);
+        //     byte[] byteResult = EntityUtils.toByteArray(responseEntity);
+        //     String result = new String(byteResult, "ISO-8859-2");
+        //     responseClose(response);
+        //     JSONObject jsonOutput = new JSONObject(result);
+        //     int gitLabId = jsonOutput.getInt("id");
+        //     String strGitLabId = String.valueOf(gitLabId);
             
-            // Now that the user's GitLab is created, at the cas3 identity to the user's profile.
-            createGitLabIdentity(strGitLabId, username);
+        //     // Now that the user's GitLab is created, at the cas3 identity to the user's profile.
+        //     createGitLabIdentity(strGitLabId, username);
        
-            // Next, create a MAAP impersonation token for the ADE to use.
-            String gitLabAccessToken = createGitLabImpersonationToken(strGitLabId);
+        //     // Next, create a MAAP impersonation token for the ADE to use.
+        //     String gitLabAccessToken = createGitLabImpersonationToken(strGitLabId);
        
-            // Lastly, update Syncope with the user's Gitlab info so we can pass on the attributes during login.
-            String syncopePatchUrl = syncope_url + "/users/" + syncope_uid;
-            String syncopePatchBody = "{ "
-                + "\"@class\" : \"org.apache.syncope.common.lib.patch.UserPatch\", " +
-                "  \"key\" : \"" + syncope_uid + "\", " +
-                "  \"plainAttrs\" : [\n" +
-                "    {\n" +
-                "      \"operation\": \"ADD_REPLACE\",\n" +
-                "      \"attrTO\" :\n" +
-                "        {\n" +
-                "          \"schema\": \"gitlab_access_token\",\n" +
-                "          \"values\": [\n" +
-                "            \"" + gitLabAccessToken + "\"\n" +
-                "          ]\n" +
-                "      }\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"operation\": \"ADD_REPLACE\",\n" +
-                "      \"attrTO\" :\n" +
-                "        {\n" +
-                "          \"schema\": \"gitlab_uid\",\n" +
-                "          \"values\": [\n" +
-                "            \"" + strGitLabId + "\"\n" +
-                "          ]\n" +
-                "      }\n" +
-                "    }\n" +
-                "  ]"
-                + "}";
+        //     // Lastly, update Syncope with the user's Gitlab info so we can pass on the attributes during login.
+        //     String syncopePatchUrl = syncope_url + "/users/" + syncope_uid;
+        //     String syncopePatchBody = "{ "
+        //         + "\"@class\" : \"org.apache.syncope.common.lib.patch.UserPatch\", " +
+        //         "  \"key\" : \"" + syncope_uid + "\", " +
+        //         "  \"plainAttrs\" : [\n" +
+        //         "    {\n" +
+        //         "      \"operation\": \"ADD_REPLACE\",\n" +
+        //         "      \"attrTO\" :\n" +
+        //         "        {\n" +
+        //         "          \"schema\": \"gitlab_access_token\",\n" +
+        //         "          \"values\": [\n" +
+        //         "            \"" + gitLabAccessToken + "\"\n" +
+        //         "          ]\n" +
+        //         "      }\n" +
+        //         "    },\n" +
+        //         "    {\n" +
+        //         "      \"operation\": \"ADD_REPLACE\",\n" +
+        //         "      \"attrTO\" :\n" +
+        //         "        {\n" +
+        //         "          \"schema\": \"gitlab_uid\",\n" +
+        //         "          \"values\": [\n" +
+        //         "            \"" + strGitLabId + "\"\n" +
+        //         "          ]\n" +
+        //         "      }\n" +
+        //         "    }\n" +
+        //         "  ]"
+        //         + "}";
        
-            uriBuilderPost = new URIBuilder(syncopePatchUrl);
-            uriPost = uriBuilderPost.build();
-            String encoding = java.util.Base64.getEncoder().encodeToString((syncope_user + ":" + syncope_password).getBytes());
+        //     uriBuilderPost = new URIBuilder(syncopePatchUrl);
+        //     uriPost = uriBuilderPost.build();
+        //     String encoding = java.util.Base64.getEncoder().encodeToString((syncope_user + ":" + syncope_password).getBytes());
        
-            HttpUriRequest requestPatch = new HttpPatch(uriPost);
-            requestPatch.addHeader("Accept", "application/json");
-            requestPatch.addHeader("Content-Type", "application/json");
-            requestPatch.addHeader("X-Syncope-Domain", "Master");
-            requestPatch.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + encoding);
-            ((HttpPatch) requestPatch).setEntity(new StringEntity(syncopePatchBody));
-            client.execute(requestPatch);
-        }  
+        //     HttpUriRequest requestPatch = new HttpPatch(uriPost);
+        //     requestPatch.addHeader("Accept", "application/json");
+        //     requestPatch.addHeader("Content-Type", "application/json");
+        //     requestPatch.addHeader("X-Syncope-Domain", "Master");
+        //     requestPatch.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + encoding);
+        //     ((HttpPatch) requestPatch).setEntity(new StringEntity(syncopePatchBody));
+        //     client.execute(requestPatch);
+        // }  
     }
 
     private JSONArray findGitLabUser(String query) throws URISyntaxException, IOException {
@@ -523,30 +466,30 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
         return null;
     }
    
-    private void suspendUser(
-            final HttpClient client,
-            final String uid,
-            final String syncopeUrl,
-            final String encoding) throws URISyntaxException, IOException {
+    // private void suspendUser(
+    //         final HttpClient client,
+    //         final String uid,
+    //         final String syncopeUrl,
+    //         final String encoding) throws URISyntaxException, IOException {
    
-        URIBuilder uriBuilderStatus = new URIBuilder(syncopeUrl + "/users/" + uid + "/status");
-        URI uriStatus = uriBuilderStatus.build();
+    //     URIBuilder uriBuilderStatus = new URIBuilder(syncopeUrl + "/users/" + uid + "/status");
+    //     URI uriStatus = uriBuilderStatus.build();
    
-        HttpUriRequest requestStatus = new HttpPost(uriStatus);
-        requestStatus.addHeader("Accept", "application/json");
-        requestStatus.addHeader("Content-Type", "application/json");
-        requestStatus.addHeader("X-Syncope-Domain", "Master");
-        requestStatus.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + encoding);
+    //     HttpUriRequest requestStatus = new HttpPost(uriStatus);
+    //     requestStatus.addHeader("Accept", "application/json");
+    //     requestStatus.addHeader("Content-Type", "application/json");
+    //     requestStatus.addHeader("X-Syncope-Domain", "Master");
+    //     requestStatus.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + encoding);
    
-        ((HttpPost) requestStatus).setEntity(new StringEntity("{ "
-                + "\"operation\": \"ADD_REPLACE\", "
-                + "\"key\" : \"" + uid + "\", "
-                + "\"type\" : \"SUSPEND\", "
-                + "\"resources\" : [] "
-                + "}"));
+    //     ((HttpPost) requestStatus).setEntity(new StringEntity("{ "
+    //             + "\"operation\": \"ADD_REPLACE\", "
+    //             + "\"key\" : \"" + uid + "\", "
+    //             + "\"type\" : \"SUSPEND\", "
+    //             + "\"resources\" : [] "
+    //             + "}"));
    
-        client.execute(requestStatus);
-    }
+    //     client.execute(requestStatus);
+    // }
    
     private boolean emailWhitelisted(String email, String whitelist) {
    
