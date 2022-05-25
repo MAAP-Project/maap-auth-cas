@@ -89,7 +89,6 @@ dependencies {
 
     implementation "com.github.scribejava:scribejava-core:${project.'scribejavaVersion'}"
     implementation "com.github.scribejava:scribejava-apis:${project.'scribejavaVersion'}"
-
     implementation "org.apereo.cas:cas-server-support-pac4j-webflow:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-support-pac4j-core:${project.'cas.version'}" 
     implementation "org.apereo.cas:cas-server-support-pac4j-authentication:${project.'cas.version'}" 
@@ -102,14 +101,10 @@ dependencies {
     implementation "org.apereo.cas:cas-server-support-json-service-registry:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-support-generic:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-support-oidc:${project.'cas.version'}"
-    
-    
     implementation "org.apereo.cas:cas-server-core-configuration:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-core-webflow-api:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-core-web-api:${project.'cas.version'}"
-    implementation "org.apereo.cas:cas-server-core-util:${project.'cas.version'}"
-    
-   
+    implementation "org.apereo.cas:cas-server-core-util:${project.'cas.version'}"  
     implementation "org.apereo.cas:cas-server-core-webflow:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-core-api-configuration-model:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-support-pac4j-core-clients:${project.'cas.version'}"
@@ -127,6 +122,7 @@ dependencies {
     implementation "org.apereo.cas:cas-server-core-authentication:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-core-authentication-api:${project.'cas.version'}"
     implementation "org.apereo.cas:cas-server-support-oauth-core-api:${project.'cas.version'}"
+    implementation "org.javatuples:javatuples:1.2"
 }
 
 apply plugin: "io.freefair.lombok"
