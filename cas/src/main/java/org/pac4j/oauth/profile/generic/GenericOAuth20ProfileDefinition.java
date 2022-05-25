@@ -9,6 +9,7 @@ import static org.pac4j.core.profile.AttributeLocation.PROFILE_ATTRIBUTE;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.pac4j.core.profile.ProfileHelper;
 import org.pac4j.core.profile.converter.AttributeConverter;
@@ -34,6 +35,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.javatuples.Pair;
+import org.javatuples.Triplet;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -64,19 +67,15 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
     public static final String STATUS = "status";
     public static final String STATUS_ACTIVE = "active";
     public static final String STATUS_SUSPENDED = "suspended";
+    public static final String GITLAB_ID = "gitlab_id";
+    public static final String GITLAB_TOKEN = "gitlab_token";
     public static final String CLIENT_ESA = "ESA";    
     public static final String CLIENT_NASA = "maapauth";    
-    public static final String CUSTOM_SYNCOPE_EMAIL_WHITELIST = "syncope_email_whitelist";
     public static final String CUSTOM_CAS_KEY = "cas_key";
     public static final String CUSTOM_MAAP_API_URL = "maap_api_url";
-    public static final String CUSTOM_GITLAB_PASSWORD = "gitlab_password";
-    public static final String CUSTOM_GITLAB_URL = "gitlab_url";
     
-    private String syncope_email_whitelist;
     private String cas_key;
     private String maap_api_url;
-    private String gitlab_password;
-    private String gitlab_url;
 
     private final Map<String,String> profileAttributes = new HashMap<>();
 
@@ -130,18 +129,17 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
         }  
         
         try {
-            Boolean maap_user = getMaapUser(
+        	Triplet<Boolean, String, String> maap_user_attributes = getMaapUser(
                 (String)profile.getAttribute("preferred_username"), 
                 profile.getUsername(), 
                 profile.getFirstName(), 
                 profile.getFamilyName(),
                 (String)profile.getAttribute("organization"));
 
-            convertAndAdd(profile, PROFILE_ATTRIBUTE, STATUS, maap_user ? STATUS_ACTIVE : STATUS_SUSPENDED);
-
-//             if(isActive) {
-//                 syncWithGitLab(syncope_uid, (String)profile.getAttribute("preferred_username"), profile.getUsername(), profile.getFirstName(), profile.getFamilyName());
-//             }
+            convertAndAdd(profile, PROFILE_ATTRIBUTE, STATUS, maap_user_attributes.getValue0() ? STATUS_ACTIVE : STATUS_SUSPENDED);
+            convertAndAdd(profile, PROFILE_ATTRIBUTE, GITLAB_ID, maap_user_attributes.getValue1());
+            convertAndAdd(profile, PROFILE_ATTRIBUTE, GITLAB_TOKEN, maap_user_attributes.getValue2());
+            
             
         } catch (URISyntaxException e) {
             e.printStackTrace();
@@ -152,36 +150,8 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
         return profile;
     }
     
-    // private void applyMaapAttributes(OAuth20Profile profile) {        
-    // 	String clientName = profile.getClientName() != null ? profile.getClientName() : "";
-    	
-    // 	if(clientName.equals(CLIENT_NASA)) {
-    //         try {
-    // 			syncWithSyncope((String)profile.getAttribute("preferred_username"), profile.getUsername(), profile.getFirstName(), profile.getFamilyName());
-    // 		} catch (URISyntaxException e) {
-    // 			e.printStackTrace();
-    // 		} catch (IOException e) {
-    // 			e.printStackTrace();
-    // 		}
-    // 	} else if (clientName.equals(CLIENT_ESA)) {
-    // 		//Add 'status=active' attribute to profile. ESA users are assumed to be pre-approved.
-    //         convertAndAdd(profile, PROFILE_ATTRIBUTE, STATUS, STATUS_ACTIVE);
-    // 	} else {
-    // 		 raiseProfileExtractionJsonError("No valid client name found.");
-    // 	}
-    // }
-    
     private void assignCustomAttribute(String key, String value) {
     	switch(key) {
-    	  case CUSTOM_GITLAB_PASSWORD:
-    		gitlab_password = value;
-    	    break;
-    	  case CUSTOM_GITLAB_URL:
-      	    gitlab_url = value;
-      	    break;
-    	  case CUSTOM_SYNCOPE_EMAIL_WHITELIST:
-      	    syncope_email_whitelist = value;
-      	    break;
     	  case CUSTOM_CAS_KEY:
       	    cas_key = value;
       	    break;
@@ -231,16 +201,16 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
         this.firstNodePath = firstNodePath;
     }
 
-    public Boolean getMaapUser(
+    public Triplet<Boolean, String, String> getMaapUser(
         final String username, 
         String email, 
         String firstName, 
         String lastName,
         String org) throws URISyntaxException, IOException {
 
-        if(emailWhitelisted(username, syncope_email_whitelist)) {
-            return true;
-        }
+        Boolean activeUser = false; 
+        String gitlabId = null;
+        String gitlabToken = null;
 
         final HttpClientBuilder builder = HttpClientBuilder.create();
         final HttpClient client = builder.build();
@@ -251,204 +221,42 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
         request.setHeader("cas-authorization", cas_key);
         HttpResponse response = client.execute(request);
 
-        Boolean activeUser = false; 
         Boolean userExists = response.getStatusLine().getStatusCode() == 200;
 
         if(userExists) {
+        	
             Map attributes = jacksonObjectMapper.readValue(response.getEntity().getContent(), Map.class);    
             activeUser = attributesContainActiveStatus(attributes); 
-
-            if(activeUser) {
-                syncWithGitLab(username, email, firstName, lastName);
-            }
+            gitlabId = getAttributeValue(attributes, "gitlab_id");
+            gitlabToken = getAttributeValue(attributes, "gitlab_token");
+            
         } else {
-            request = new HttpPost(uri);
-            request.setHeader("cas-authorization", cas_key);
-            ((HttpPost) request).setEntity(new StringEntity(
-                "{ "
-                + "\"first_name\" : \"" + firstName + "\", "
-                + "\"last_name\" : \"" + lastName + "\", "
-                + "\"organization\" : \"" + org + "\", "
-                + "\"email\" : \"" + email + "\""
-                + "}"));
-            response = client.execute(request);
+        	
+            URIBuilder uriBuilderPost = new URIBuilder(maap_api_url + "/members/" + username);
+            URI uriPost = uriBuilderPost.build();
+        	HttpUriRequest req_post = new HttpPost(uriPost);
+        	req_post.addHeader("cas-authorization", cas_key);
+        	req_post.addHeader("Accept", "application/json");
+        	req_post.addHeader("Content-Type", "application/json");
+        	String body = "{ "
+                    + "\"first_name\" : \"" + firstName + "\", "
+                    + "\"last_name\" : \"" + lastName + "\", "
+                    + "\"organization\" : \"" + (org == null ? "" : org) + "\", "
+                    + "\"email\" : \"" + email + "\""
+                    + "}";
+        	
+            ((HttpPost) req_post).setEntity(new StringEntity(body));
+            client.execute(req_post);
         }
         
-        return activeUser;
+        return Triplet.with(activeUser, gitlabId, gitlabToken);
     }
     
     private Boolean attributesContainActiveStatus(Map attributes) {
     	return attributes.get("status") != null && attributes.get("status").equals(STATUS_ACTIVE);
     }
     
-    //Add user to GitLab, and update MAAP with the GitLab access token and Id.
-    private void syncWithGitLab(String username, String email, String firstName, String lastName) throws URISyntaxException, IOException  {
-        final HttpClientBuilder builder = HttpClientBuilder.create();
-        final CloseableHttpClient client = builder.build();  
-        JSONArray jArray = new JSONArray();
-
-        //Lookup user by EDL username
-        jArray = findGitLabUser("/users?username=" + username);
-
-        //If no match found, try searching by username (email)
-        if(jArray.length() == 0) 
-            jArray = findGitLabUser("/users?search=" + email);
-        
-        //If user doesn't exist in GitLab, create an account
-        if(jArray.length() == 0) {
-            URIBuilder uriBuilderPost = new URIBuilder(gitlab_url + "/users");
-            URI uriPost = uriBuilderPost.build();
-       
-            HttpUriRequest requestPost = new HttpPost(uriPost);
-            requestPost.addHeader("Accept", "application/json");
-            requestPost.addHeader("Content-Type", "application/json");
-            requestPost.addHeader("PRIVATE-TOKEN", gitlab_password);
-       
-            ((HttpPost) requestPost).setEntity(new StringEntity(
-                    "{ "
-                    + "\"username\" : \"" + username + "\", "
-                    + "\"password\" : \"" + Double.toString(Math.random()) + "\", "
-                    + "\"name\" : \"" + firstName + " " + lastName + "\", "
-                    + "\"email\" : \"" + email + "\", "
-                    + "\"skip_confirmation\" : true"
-                    + "}"));
-       
-            final CloseableHttpResponse response = client.execute(requestPost);
-            final HttpEntity responseEntity = response.getEntity();
-       
-            byte[] byteResult = EntityUtils.toByteArray(responseEntity);
-            String result = new String(byteResult, "ISO-8859-2");
-            responseClose(response);
-            JSONObject jsonOutput = new JSONObject(result);
-            int gitLabId = jsonOutput.getInt("id");
-            String strGitLabId = String.valueOf(gitLabId);
-            
-            // Now that the user's GitLab is created, add the cas3 identity to the user's profile.
-            createGitLabIdentity(strGitLabId, email);
-       
-            // Next, create a MAAP impersonation token for the ADE to use.
-            String gitLabAccessToken = createGitLabImpersonationToken(strGitLabId);
-       
-            // Lastly, update the user's MAAP info so we can pass on the attributes during login.
-            URIBuilder uriBuilder = new URIBuilder(maap_api_url + "/members/" + username);
-            URI uri = uriBuilder.build();
-            HttpUriRequest request = new HttpPut(uri);
-            request.setHeader("cas-authorization", cas_key);
-            ((HttpPut) request).setEntity(new StringEntity(
-                "{ "
-                + "\"gitlab_id\" : \"" + strGitLabId + "\", "
-                + "\"gitlab_username\" : \"" + username + "\", "
-                + "\"gitlab_token\" : \"" + gitLabAccessToken + "\""
-                + "}"));
-             client.execute(request);
-        }  
-    }
-
-    private JSONArray findGitLabUser(String query) throws URISyntaxException, IOException {
-        final HttpClientBuilder builder = HttpClientBuilder.create();
-        final CloseableHttpClient client = builder.build();        
-        
-        URIBuilder uriBuilderGet = new URIBuilder(gitlab_url + query);
-        URI uriGet = uriBuilderGet.build();
-   
-        HttpUriRequest requestGet = new HttpGet(uriGet);
-        requestGet.addHeader("Accept", "application/json");
-        requestGet.addHeader("Content-Type", "application/json");
-        requestGet.addHeader("PRIVATE-TOKEN", gitlab_password);
-   
-        final CloseableHttpResponse getResponse = client.execute(requestGet);
-        final HttpEntity getResponseEntity = getResponse.getEntity();
-        
-        byte[] byteResult = EntityUtils.toByteArray(getResponseEntity);
-        String result = new String(byteResult, "ISO-8859-2");
-        responseClose(getResponse);
-        JSONArray jArray = (JSONArray) new JSONTokener(result).nextValue();
-
-        return jArray;
-    }
-   
-    private String createGitLabImpersonationToken(String uid) throws URISyntaxException, ClientProtocolException, IOException {
-        String result = "";
-        final HttpClientBuilder builder = HttpClientBuilder.create();
-        final CloseableHttpClient client = builder.build();
-   
-        String impersonationTokenUrl = gitlab_url + "/users/" + uid + "/impersonation_tokens";
-        String impersonationTokenBody = "{ "
-            + "\"name\" : \"MAAP\", "
-            + "\"expires_at\" : \"2038-01-19\", "
-            + "\"scopes\" :[\"api\"]"
-            + "}";
-   
-        URIBuilder uriBuilderPost = new URIBuilder(impersonationTokenUrl);
-        URI uriPost = uriBuilderPost.build();
-   
-        HttpUriRequest requestPost = new HttpPost(uriPost);
-        requestPost.addHeader("Accept", "application/json");
-        requestPost.addHeader("Content-Type", "application/json");
-        requestPost.addHeader("PRIVATE-TOKEN", gitlab_password);
-        ((HttpPost) requestPost).setEntity(new StringEntity(impersonationTokenBody));
-   
-        final CloseableHttpResponse response = client.execute(requestPost);
-   
-        String json = EntityUtils.toString(response.getEntity());
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode node = mapper.readTree(json);
-        result = node.get("token").asText();
-   
-        responseClose(response);
-   
-        return result;
-    }
-   
-    private void createGitLabIdentity(String uid, String email) throws URISyntaxException, ClientProtocolException, IOException {
-        final HttpClientBuilder builder = HttpClientBuilder.create();
-        final CloseableHttpClient client = builder.build();
-   
-        String userIdentityUrl = gitlab_url + "/users/" + uid ;
-        String userIdentityBody = "{ "
-            + "\"provider\" : \"cas3\", "
-            + "\"extern_uid\" : \"" + email + "\""
-            + "}";
-   
-        URIBuilder uriBuilder = new URIBuilder(userIdentityUrl);
-        URI uri = uriBuilder.build();
-   
-        HttpUriRequest requestPut = new HttpPut(uri);
-        requestPut.addHeader("Accept", "application/json");
-        requestPut.addHeader("Content-Type", "application/json");
-        requestPut.addHeader("PRIVATE-TOKEN", gitlab_password);
-        ((HttpPut) requestPut).setEntity(new StringEntity(userIdentityBody));
-   
-        final CloseableHttpResponse response = client.execute(requestPut);
-   
-        String json = EntityUtils.toString(response.getEntity());
-   
-        responseClose(response);
-    }
-   
-    private void responseClose(CloseableHttpResponse response) {
-        try {
-            response.close();
-        } catch (IOException e) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("Failed close response: ").append(response);
-            logger.info("Error closing response: " + sb.toString());
-        }
-    }
-   
-    private boolean emailWhitelisted(String email, String whitelist) {
-   
-        if(whitelist.equals("*"))
-            return true;
-        else {
-            List<String> domainSegments = Arrays.asList(whitelist.split("\\s*,\\s*"));
-   
-            for(String ds : domainSegments) {
-                if(email.endsWith(ds))
-                    return true;
-            }
-   
-            return false;
-        }
+    private String getAttributeValue(Map attributes, String attributeName) {
+    	return attributes.get(attributeName) == null ? null : (String) attributes.get(attributeName);
     }
 }
