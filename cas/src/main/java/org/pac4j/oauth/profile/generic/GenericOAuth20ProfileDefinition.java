@@ -212,9 +212,9 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
         	
             Map attributes = jacksonObjectMapper.readValue(response.getEntity().getContent(), Map.class);    
             activeUser = attributesContainActiveStatus(attributes); 
-            gitlabId = getAttributeValue(attributes, "gitlab_id");
-            gitlabToken = getAttributeValue(attributes, "gitlab_token");
-            publicSshKey = getAttributeValue(attributes, "gitlab_token");
+            gitlabId = getAttributeValue(attributes, GITLAB_ID);
+            gitlabToken = getAttributeValue(attributes, GITLAB_TOKEN);
+            publicSshKey = getAttributeValue(attributes, PUBLIC_SSH_KEY);
             
         } else {
         	
