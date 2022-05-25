@@ -1,6 +1,5 @@
 package org.pac4j.oauth.profile.generic;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.scribejava.core.model.Token;
 import com.github.scribejava.core.model.Verb;
@@ -9,8 +8,6 @@ import static org.pac4j.core.profile.AttributeLocation.PROFILE_ATTRIBUTE;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-
 import org.pac4j.core.profile.ProfileHelper;
 import org.pac4j.core.profile.converter.AttributeConverter;
 import org.pac4j.core.profile.converter.StringConverter;
@@ -18,33 +15,18 @@ import org.pac4j.oauth.config.OAuthConfiguration;
 import org.pac4j.oauth.profile.JsonHelper;
 import org.pac4j.oauth.profile.OAuth20Profile;
 import org.pac4j.oauth.profile.definition.OAuthProfileDefinition;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
-import org.javatuples.Pair;
-import org.javatuples.Triplet;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONTokener;
+import org.javatuples.Quartet;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
-import java.util.Arrays;
 
 /**
  * <p>This class is the user profile for generic OAuth2 with appropriate getters.</p>
@@ -69,6 +51,7 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
     public static final String STATUS_SUSPENDED = "suspended";
     public static final String GITLAB_ID = "gitlab_id";
     public static final String GITLAB_TOKEN = "gitlab_token";
+    public static final String PUBLIC_SSH_KEY = "public_ssh_key";
     public static final String CLIENT_ESA = "ESA";    
     public static final String CLIENT_NASA = "maapauth";    
     public static final String CUSTOM_CAS_KEY = "cas_key";
@@ -129,7 +112,7 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
         }  
         
         try {
-        	Triplet<Boolean, String, String> maap_user_attributes = getMaapUser(
+        	Quartet<Boolean, String, String, String> maap_user_attributes = getMaapUser(
                 (String)profile.getAttribute("preferred_username"), 
                 profile.getUsername(), 
                 profile.getFirstName(), 
@@ -139,6 +122,7 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
             convertAndAdd(profile, PROFILE_ATTRIBUTE, STATUS, maap_user_attributes.getValue0() ? STATUS_ACTIVE : STATUS_SUSPENDED);
             convertAndAdd(profile, PROFILE_ATTRIBUTE, GITLAB_ID, maap_user_attributes.getValue1());
             convertAndAdd(profile, PROFILE_ATTRIBUTE, GITLAB_TOKEN, maap_user_attributes.getValue2());
+            convertAndAdd(profile, PROFILE_ATTRIBUTE, PUBLIC_SSH_KEY, maap_user_attributes.getValue3());
             
             
         } catch (URISyntaxException e) {
@@ -201,7 +185,7 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
         this.firstNodePath = firstNodePath;
     }
 
-    public Triplet<Boolean, String, String> getMaapUser(
+    public Quartet<Boolean, String, String, String> getMaapUser(
         final String username, 
         String email, 
         String firstName, 
@@ -211,6 +195,7 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
         Boolean activeUser = false; 
         String gitlabId = null;
         String gitlabToken = null;
+        String publicSshKey = null;
 
         final HttpClientBuilder builder = HttpClientBuilder.create();
         final HttpClient client = builder.build();
@@ -229,6 +214,7 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
             activeUser = attributesContainActiveStatus(attributes); 
             gitlabId = getAttributeValue(attributes, "gitlab_id");
             gitlabToken = getAttributeValue(attributes, "gitlab_token");
+            publicSshKey = getAttributeValue(attributes, "gitlab_token");
             
         } else {
         	
@@ -249,7 +235,7 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
             client.execute(req_post);
         }
         
-        return Triplet.with(activeUser, gitlabId, gitlabToken);
+        return Quartet.with(activeUser, gitlabId, gitlabToken, publicSshKey);
     }
     
     private Boolean attributesContainActiveStatus(Map attributes) {
