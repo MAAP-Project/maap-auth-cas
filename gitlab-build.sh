@@ -11,6 +11,8 @@ echo "cas.webflow.crypto.signing.key=${WEBFLOW_CRYPTO_SIGNING_KEY}" >> ${CAS_PRO
 echo "cas.webflow.crypto.encryption.key=${WEBFLOW_CRYPTO_ENCRYPTION_KEY}" >> ${CAS_PROPS}
 echo "cas.tgc.crypto.signing.key=${TGC_CRYPTO_SIGNING_KEY}" >> ${CAS_PROPS}
 echo "cas.tgc.crypto.encryption.key=${TGC_CRYPTO_ENCRYPTION_KEY}" >> ${CAS_PROPS}
+echo "cas.authn.attributeRepository.rest[0].basicAuthUsername=${SYNCOPE_USERNAME}" >> ${CAS_PROPS}
+echo "cas.authn.attributeRepository.rest[0].basicAuthPassword=${SYNCOPE_PASSWORD}" >> ${CAS_PROPS}
 
 echo "cas.authn.pac4j.oauth2[0].id=${URS_KEY}" >> ${CAS_PROPS}
 echo "cas.authn.pac4j.oauth2[0].custom-params.urs4_key=${URS_KEY}" >> ${CAS_PROPS}
