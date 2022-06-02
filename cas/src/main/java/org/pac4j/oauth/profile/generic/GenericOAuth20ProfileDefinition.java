@@ -258,7 +258,7 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
                             + "\"username\" : \"" + username + "\", "
                             + "\"password\" : \"" + DEFAULT_PASSWORD + "\", "
                             + "\"realm\" : \"/\", "
-                            + "\"status\" : \"suspended\", "
+                            + "\"status\" : \"active\", "
                             + "\"auxClasses\" : [], "
                             + "\"plainAttrs\" : [\n" +
                             "    {\n" +
@@ -296,7 +296,8 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
 //            if(emailWhitelisted(username, syncope_email_whitelist)) 
 //            	activeUser = true;
 //            else
-//                suspendUser(client, uid, syncope_url, encoding);
+        	String syncope_uid = getUidForUser(client, syncope_url, encoding, username);
+            suspendUser(client, syncope_uid, syncope_url, encoding);
             
         } 
         else if (attributes.get("status") != null && attributes.get("status").toString().equals("active")) {
