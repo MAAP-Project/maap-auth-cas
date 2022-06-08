@@ -1,0 +1,87 @@
+{
+    @class: org.apereo.cas.services.OidcRegisteredService
+    serviceId: https://keycloak-che.val.esa-maap.org/auth/realms/che/broker/NASA/endpoint
+    name: ESA MAAP ADE
+    id: 1553779744261
+    description: ESA MAAP Che
+    expirationPolicy:
+    {
+      @class: org.apereo.cas.services.DefaultRegisteredServiceExpirationPolicy
+      deleteWhenExpired: false
+      notifyWhenDeleted: false
+    }
+    proxyPolicy:
+    {
+      @class: org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy
+    }
+    evaluationOrder: 6
+    usernameAttributeProvider:
+    {
+      @class: org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider
+      canonicalizationMode: NONE
+      encryptUsername: false
+    }
+    logoutType: BACK_CHANNEL
+    attributeReleasePolicy:
+    {
+      @class: org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy
+      principalAttributesRepository:
+      {
+        @class: org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository
+        expiration: 2
+        timeUnit: HOURS
+      }
+      consentPolicy:
+      {
+        @class: org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy
+        enabled: true
+      }
+      authorizedToReleaseCredentialPassword: false
+      authorizedToReleaseProxyGrantingTicket: false
+      excludeDefaultAttributes: false
+      authorizedToReleaseAuthenticationAttributes: true
+    }
+    multifactorPolicy:
+    {
+      @class: org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy
+      failureMode: NOT_SET
+      bypassEnabled: false
+    }
+    logoutUrl: https://che-val.biomass-maap.com/auth/realms/che/protocol/openid-connect/logout
+    accessStrategy:
+    {
+      @class: org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy
+      order: 0
+      enabled: true
+      ssoEnabled: true
+      delegatedAuthenticationPolicy:
+      {
+        @class: org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy
+      }
+      requireAllAttributes: false
+      caseInsensitive: true
+    }
+    clientSecret: clientSecretValue
+    clientId: clientIdValue
+    bypassApprovalPrompt: true
+    generateRefreshToken: false
+    jsonFormat: true
+    jwks: /WEB-INF/classes/jwks/keystore.jwks
+    signIdToken: true
+    encryptIdToken: false
+    idTokenEncryptionAlg: A256GCMKW
+    idTokenEncryptionEncoding: A256GCM
+    subjectType: PUBLIC
+    dynamicallyRegistered: false
+    implicit: false
+    scopes:
+    [
+      java.util.HashSet
+      [
+        openid
+        custom
+        profile
+        email
+      ]
+    ]
+  }
