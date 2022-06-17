@@ -48,7 +48,7 @@ sed -i "s/casDockerImage/mas.$CAS_SERVER_NAME.maap-project.org\/root\/auth-ci\/m
 git log -1 > commit.txt
 cp -v ../*.key cas/etc/cas/
 cp -v ../*.jwks cas/etc/cas/
-cp -v ../oidc-keystore.jwks cas/etc/cas/config/
+cp -v ../*.jwks cas/etc/cas/config/
 
 docker-compose -f docker-compose-ci.yml build 
 docker push ${IMAGE_NAME}
