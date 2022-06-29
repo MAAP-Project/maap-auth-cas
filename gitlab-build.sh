@@ -7,19 +7,12 @@ pushd maap-auth-cas
 
 # Update cas.properties with CI config variables
 echo "" >> ${CAS_PROPS}
-echo "cas.webflow.crypto.signing.key=${WEBFLOW_CRYPTO_SIGNING_KEY}" >> ${CAS_PROPS}
-echo "cas.webflow.crypto.encryption.key=${WEBFLOW_CRYPTO_ENCRYPTION_KEY}" >> ${CAS_PROPS}
-echo "cas.tgc.crypto.signing.key=${TGC_CRYPTO_SIGNING_KEY}" >> ${CAS_PROPS}
-echo "cas.tgc.crypto.encryption.key=${TGC_CRYPTO_ENCRYPTION_KEY}" >> ${CAS_PROPS}
-
 echo "cas.authn.pac4j.oauth2[0].id=${URS_KEY}" >> ${CAS_PROPS}
 echo "cas.authn.pac4j.oauth2[0].custom-params.urs4_key=${URS_KEY}" >> ${CAS_PROPS}
 echo "cas.authn.pac4j.oauth2[0].secret=${URS_SECRET}" >> ${CAS_PROPS}
 echo "cas.authn.pac4j.oauth2[0].profile-attrs.cas_key=${CAS_SECRET_KEY}" >> ${CAS_PROPS}
-
 echo "cas.authn.pac4j.oidc[0].generic.id=${ESA_ID}" >> ${CAS_PROPS}
 echo "cas.authn.pac4j.oidc[0].generic.secret=${ESA_SECRET}" >> ${CAS_PROPS}
-
 echo "cas.authn.pac4j.oidc[1].generic.id=${ESA_API_ID}" >> ${CAS_PROPS}
 echo "cas.authn.pac4j.oidc[1].generic.secret=${ESA_API_SECRET}" >> ${CAS_PROPS}
 
