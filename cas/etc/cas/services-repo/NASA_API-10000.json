@@ -4,7 +4,7 @@
     name: NASA MAAP API
     id: 10000
     description: Multimission Algorithm and Analytics Platform
-    evaluationOrder: 20
+    evaluationOrder: 10000
     attributeReleasePolicy:
     {
       @class: org.apereo.cas.services.ReturnAllAttributeReleasePolicy

@@ -2,8 +2,8 @@
     @class: org.apereo.cas.support.oauth.services.OAuthRegisteredService
     serviceId: oauthNasaMaap
     name: ESA Oauth Service
-    id: 33443
-    evaluationOrder: 7
+    id: 10010
+    evaluationOrder: 10010
     clientSecret: clientSecretValue
     clientId: clientIdValue
     bypassApprovalPrompt: true

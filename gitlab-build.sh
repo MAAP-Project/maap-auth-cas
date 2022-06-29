@@ -32,11 +32,17 @@ sed -i "s/clientSecretValue/$ADE_CLIENT_SECRET/g" "cas/etc/cas/services-repo/NAS
 sed -i "s/clientIdValue/$ADE_CLIENT_ID/g" "cas/etc/cas/services-repo/NASA_ADE-00002.json"
 sed -i "s/clientSecretValue/$OAUTH_CLIENT_SECRET/g" "cas/etc/cas/services-repo/NASA_OAuth-33443.json"
 sed -i "s/clientIdValue/$OAUTH_CLIENT_ID/g" "cas/etc/cas/services-repo/NASA_OAuth-33443.json"
+sed -i "s/clientSecretValue/$ESA_ADE_CLIENT_SECRET/g" "cas/etc/cas/services-repo/ESA_ADE-00020.json"
+sed -i "s/clientIdValue/$ESA_ADE_CLIENT_ID/g" "cas/etc/cas/services-repo/ESA_ADE-00020.json"
+sed -i "s/clientSecretValue/$ESA_LIFERAY_CLIENT_SECRET/g" "cas/etc/cas/services-repo/ESA_Liferay-00025.json"
+sed -i "s/clientIdValue/$ESA_LIFERAY_CLIENT_ID/g" "cas/etc/cas/services-repo/ESA_Liferay-00025.json"
 
 sed -i "s/casDockerImage/mas.$CAS_SERVER_NAME.maap-project.org\/root\/auth-ci\/maap-auth-cas/g" "docker-compose-ci.yml"
 
 git log -1 > commit.txt
 cp -v ../*.key cas/etc/cas/
+cp -v ../*.jwks cas/etc/cas/
+cp -v ../*.jwks cas/etc/cas/config/
 
 docker-compose -f docker-compose-ci.yml build 
 docker push ${IMAGE_NAME}
