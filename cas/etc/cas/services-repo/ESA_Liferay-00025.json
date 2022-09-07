@@ -45,7 +45,7 @@
     multifactorPolicy:
     {
       @class: org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy
-      failureMode: NOT_SET
+      failureMode: NONE
       bypassEnabled: false
     }
     accessStrategy:
