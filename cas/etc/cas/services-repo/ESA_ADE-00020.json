@@ -45,7 +45,7 @@
     multifactorPolicy:
     {
       @class: org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy
-      failureMode: NOT_SET
+      failureMode: NONE
       bypassEnabled: false
     }
     logoutUrl: https://che-val.biomass-maap.com/auth/realms/che/protocol/openid-connect/logout
