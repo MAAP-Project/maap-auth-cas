@@ -231,7 +231,7 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
                     + "\"email\" : \"" + email + "\""
                     + "}";
         	
-            ((HttpPost) req_post).setEntity(new StringEntity(body));
+            ((HttpPost) req_post).setEntity(new StringEntity(body, "UTF-8"));
             client.execute(req_post);
         }
         
