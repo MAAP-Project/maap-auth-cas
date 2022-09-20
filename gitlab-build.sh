@@ -7,6 +7,7 @@ pushd maap-auth-cas
 
 # Update cas.properties with CI config variables
 echo "" >> ${CAS_PROPS}
+
 echo "cas.authn.pac4j.oauth2[0].id=${URS_KEY}" >> ${CAS_PROPS}
 echo "cas.authn.pac4j.oauth2[0].custom-params.urs4_key=${URS_KEY}" >> ${CAS_PROPS}
 echo "cas.authn.pac4j.oauth2[0].secret=${URS_SECRET}" >> ${CAS_PROPS}
