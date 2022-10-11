@@ -19,12 +19,14 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.javatuples.Quartet;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -41,6 +43,7 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
 
     public static final String UID = "uid";
     public static final String EMAIL_ADDRESS = "email_address";
+    public static final String EMAIL = "email";
     public static final String FIRST_NAME = "first_name";
     public static final String LAST_NAME = "last_name";
     public static final String STUDY_AREA = "study_area";
@@ -113,10 +116,10 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
         
         try {
         	Quartet<Boolean, String, String, String> maap_user_attributes = getMaapUser(
-                (String)profile.getAttribute("preferred_username"), 
-                profile.getUsername(), 
-                profile.getFirstName(), 
-                profile.getFamilyName(),
+        		encodeUtf8((String)profile.getAttribute("preferred_username")), 
+        		encodeUtf8(profile.getUsername()), 
+        		encodeUtf8(profile.getFirstName()), 
+        		encodeUtf8(profile.getFamilyName()),
                 (String)profile.getAttribute("organization"));
 
             convertAndAdd(profile, PROFILE_ATTRIBUTE, STATUS, maap_user_attributes.getValue0() ? STATUS_ACTIVE : STATUS_SUSPENDED);
@@ -184,6 +187,10 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
     public void setFirstNodePath(final String firstNodePath) {
         this.firstNodePath = firstNodePath;
     }
+    
+    private String encodeUtf8(String s) throws UnsupportedEncodingException {
+    	return new String(s.getBytes("UTF-8"));
+    }
 
     public Quartet<Boolean, String, String, String> getMaapUser(
         final String username, 
@@ -202,6 +209,7 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
    
         URIBuilder uriBuilder = new URIBuilder(maap_api_url + "/members/" + username);
         URI uri = uriBuilder.build();
+        
         HttpUriRequest request = new HttpGet(uri);
         request.setHeader("cas-authorization", cas_key);
         HttpResponse response = client.execute(request);
@@ -216,11 +224,31 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
             gitlabToken = getAttributeValue(attributes, GITLAB_TOKEN);
             publicSshKey = getAttributeValue(attributes, PUBLIC_SSH_KEY);
             
-        } else {
-        	
-            URIBuilder uriBuilderPost = new URIBuilder(maap_api_url + "/members/" + username);
-            URI uriPost = uriBuilderPost.build();
-        	HttpUriRequest req_post = new HttpPost(uriPost);
+            Boolean profileChanged = 
+            		email != getAttributeValue(attributes, EMAIL) ||
+                    firstName != getAttributeValue(attributes, FIRST_NAME) ||
+                    lastName != getAttributeValue(attributes, LAST_NAME);
+            
+            // Update profile in MAAP API if it's been updated in EDL
+            if(profileChanged) 
+            {
+            	HttpUriRequest req_put = new HttpPut(uri);
+            	req_put.addHeader("cas-authorization", cas_key);
+            	req_put.addHeader("Accept", "application/json");
+            	req_put.addHeader("Content-Type", "application/json");
+            	String body = "{ "
+                        + "\"first_name\" : \"" + firstName + "\", "
+                        + "\"last_name\" : \"" + lastName + "\", "
+                        + "\"organization\" : \"" + (org == null ? "" : org) + "\", "
+                        + "\"email\" : \"" + email + "\""
+                        + "}";
+            	
+                ((HttpPut) req_put).setEntity(new StringEntity(body, "UTF-8"));
+                client.execute(req_put);
+            }
+            
+        } else {        	
+        	HttpUriRequest req_post = new HttpPost(uri);
         	req_post.addHeader("cas-authorization", cas_key);
         	req_post.addHeader("Accept", "application/json");
         	req_post.addHeader("Content-Type", "application/json");
@@ -231,7 +259,7 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
                     + "\"email\" : \"" + email + "\""
                     + "}";
         	
-            ((HttpPost) req_post).setEntity(new StringEntity(body));
+            ((HttpPost) req_post).setEntity(new StringEntity(body, "UTF-8"));
             client.execute(req_post);
         }
         
