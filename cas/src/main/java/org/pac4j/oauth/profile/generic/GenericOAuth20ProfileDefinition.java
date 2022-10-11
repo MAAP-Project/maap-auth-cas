@@ -116,10 +116,10 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
         
         try {
         	Quartet<Boolean, String, String, String> maap_user_attributes = getMaapUser(
-        		encodeUtf8((String)profile.getAttribute("preferred_username")), 
-        		encodeUtf8(profile.getUsername()), 
-        		encodeUtf8(profile.getFirstName()), 
-        		encodeUtf8(profile.getFamilyName()),
+        		(String)profile.getAttribute("preferred_username"), 
+        		profile.getUsername(), 
+        		profile.getFirstName(), 
+        		profile.getFamilyName(),
                 (String)profile.getAttribute("organization"));
 
             convertAndAdd(profile, PROFILE_ATTRIBUTE, STATUS, maap_user_attributes.getValue0() ? STATUS_ACTIVE : STATUS_SUSPENDED);
@@ -186,10 +186,6 @@ public class GenericOAuth20ProfileDefinition extends OAuthProfileDefinition {
 
     public void setFirstNodePath(final String firstNodePath) {
         this.firstNodePath = firstNodePath;
-    }
-    
-    private String encodeUtf8(String s) throws UnsupportedEncodingException {
-    	return new String(s.getBytes("UTF-8"));
     }
 
     public Quartet<Boolean, String, String, String> getMaapUser(
