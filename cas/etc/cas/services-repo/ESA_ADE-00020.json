@@ -1,6 +1,6 @@
 {
     @class: org.apereo.cas.services.OidcRegisteredService
-    serviceId: https://keycloak-che.val.esa-maap.org/auth/realms/che/broker/NASA/endpoint
+    serviceId: https://auth.val.esa-maap.org/realms/maap/broker/NASA/endpoint
     name: ESA MAAP ADE
     id: 00020
     description: ESA MAAP Che
