@@ -1,9 +1,9 @@
 {
     @class: org.apereo.cas.services.OidcRegisteredService
-    serviceId: https://liferay.val.esa-maap.org/NASA/authenticate/callback
-    name: ESA MAAP Liferay
+    serviceId: https://portal.int.esa-maap.org/portal-int/ESA/home/NASA
+    name: ESA MAAP Portal
     id: 00025
-    description: ESA MAAP Liferay
+    description: ESA MAAP Portal
     evaluationOrder: 25
     expirationPolicy:
     {
@@ -58,11 +58,10 @@
       {
         @class: org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy
       }
-      requireAllAttributes: true
-      caseInsensitive: false
+      requireAllAttributes: false
+      caseInsensitive: true
     }
-    clientSecret: clientSecretValue
-    clientId: clientIdValue
+    clientId: clientIdValue 
     bypassApprovalPrompt: true
     generateRefreshToken: false
     jsonFormat: true
@@ -79,6 +78,7 @@
       java.util.HashSet
       [
         openid
+	custom
         profile
         email
       ]
