@@ -1,6 +1,6 @@
 {
     @class: org.apereo.cas.services.OidcRegisteredService
-    serviceId: https://portal.int.esa-maap.org/portal-int/ESA/home/NASA
+    serviceId: https://portal.val.esa-maap.org/portal-val/ESA/home/NASA
     name: ESA MAAP Portal
     id: 00025
     description: ESA MAAP Portal
