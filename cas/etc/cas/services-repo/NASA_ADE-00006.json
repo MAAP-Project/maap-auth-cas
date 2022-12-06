@@ -1,6 +1,6 @@
 {
     @class: org.apereo.cas.services.RegexRegisteredService
-    serviceId: https://ade.maap-environment.maap-project.org/auth/realms/che/broker/cas.*
+    serviceId: https://ade.maap-project.org/auth/realms/che/broker/cas.*
     name: Algorithm Development Environment (ADE)
     id: 00006
     evaluationOrder: 2
@@ -55,7 +55,7 @@
       failureMode: NONE
       bypassEnabled: false
     }
-    logoutUrl: https://ade.maap-environment.maap-project.org/auth/realms/che/protocol/openid-connect/logout
+    logoutUrl: https://ade.maap-project.org/auth/realms/che/protocol/openid-connect/logout
     accessStrategy:
     {
       @class: org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy
