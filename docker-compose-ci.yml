@@ -46,7 +46,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./cas
-    image: 'casDockerImage'
+    image: 'mas.uat.maap-project.org/root/auth-ci/maap-auth-cas'
     volumes:
       - cas-logs:/tmp/logs
     ports:

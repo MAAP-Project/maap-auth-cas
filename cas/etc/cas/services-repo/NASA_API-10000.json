@@ -40,7 +40,7 @@
       requireAllAttributes: false
       caseInsensitive: true
     }
-    logoutUrl: https://maap-environment.maap-project.org/wp-login.php?action=logout
+    logoutUrl: https://maap-project.org/wp-login.php?action=logout
     bypassApprovalPrompt: true
     generateRefreshToken: false
     jsonFormat: true

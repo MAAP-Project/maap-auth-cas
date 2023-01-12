@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-IMAGE_NAME="$CI_REGISTRY_IMAGE/maap-auth-cas:latest"
+IMAGE_NAME="$CI_REGISTRY_IMAGE/maap-auth-cas:ops-v3"
 CAS_PROPS="cas/etc/cas/config/cas.properties"
 
 pushd maap-auth-cas
@@ -17,11 +17,9 @@ echo "cas.authn.pac4j.oidc[0].generic.secret=${ESA_SECRET}" >> ${CAS_PROPS}
 echo "cas.authn.pac4j.oidc[1].generic.id=${ESA_API_ID}" >> ${CAS_PROPS}
 echo "cas.authn.pac4j.oidc[1].generic.secret=${ESA_API_SECRET}" >> ${CAS_PROPS}
 
-sed -i "s/maap-environment/$CAS_SERVER_NAME/g" ${CAS_PROPS}
 sed -i "s/cas-delegated-urs-name/$CAS_DELEGATED_URS_NAME/g" ${CAS_PROPS}
 
 # Update service definitions with CI config variables
-sed -i "s/maap-environment/$CAS_SERVER_NAME/g" $(find cas/etc/cas/services-repo/ -type f)
 sed -i "s/clientSecretValue/$ADE_CLIENT_SECRET/g" "cas/etc/cas/services-repo/NASA_ADE-00002.json"
 sed -i "s/clientIdValue/$ADE_CLIENT_ID/g" "cas/etc/cas/services-repo/NASA_ADE-00002.json"
 sed -i "s/clientSecretValue/$OAUTH_CLIENT_SECRET/g" "cas/etc/cas/services-repo/NASA_OAuth-33443.json"
