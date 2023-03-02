@@ -2,45 +2,6 @@ version: "3.9"
 
 services:
 
-  db:
-    image: postgres:14
-    container_name: 'maap-db'
-    restart: always
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-
-  syncope: 
-    depends_on:
-      - db
-    container_name: 'maap-auth-syncope'
-    image: apache/syncope:${SYNCOPE_VERSION}
-    ports:
-      - "18080:13009"
-    restart: always
-    environment:
-      DBMS: postgresql
-      DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
-      DB_USER: ${POSTGRES_USER}
-      DB_PASSWORD: ${POSTGRES_PASSWORD}
-      DB_POOL_MAX: 10
-      DB_POOL_MIN: 2
-      OPENJPA_REMOTE_COMMIT: sjvm
-
-  syncope-console: 
-    depends_on:
-      - syncope
-    container_name: 'maap-auth-syncope-console'
-    image: apache/syncope-console:${SYNCOPE_VERSION}
-    ports:
-      - "28080:12009"
-    restart: always
-    environment:
-      CORE_SCHEME: https
-      CORE_HOST: auth.dit.maap-project.org/syncope
-      CORE_PORT: 443
-
   cas:
     container_name: 'maap-auth-cas'
     build:
