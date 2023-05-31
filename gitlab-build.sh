@@ -33,7 +33,10 @@ sed -i "s/clientIdValue/$ESA_LIFERAY_CLIENT_ID/g" "cas/etc/cas/services-repo/ESA
 sed -i "s/casDockerImage/mas.$CAS_SERVER_NAME.maap-project.org\/root\/auth-ci\/maap-auth-cas/g" "docker-compose-ci.yml"
 
 git log -1 > commit.txt
+chmod 640 ../*.key
 cp -v ../*.key cas/etc/cas/
+
+chmod 640 ../*.jwks
 cp -v ../*.jwks cas/etc/cas/
 cp -v ../*.jwks cas/etc/cas/config/
 
