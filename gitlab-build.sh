@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-IMAGE_NAME="$CI_REGISTRY_IMAGE/maap-auth-cas:ops-v3"
+IMAGE_NAME="$CI_REGISTRY_IMAGE/maap-auth-cas:dit"
 CAS_PROPS="cas/etc/cas/config/cas.properties"
 
 pushd maap-auth-cas
