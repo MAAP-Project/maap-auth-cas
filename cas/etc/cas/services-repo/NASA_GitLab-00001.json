@@ -1,6 +1,6 @@
 {
     @class: org.apereo.cas.services.RegexRegisteredService
-    serviceId: https://repo.maap-project.org/users/auth/cas3/callback.*
+    serviceId: https://repo.dit.maap-project.org/users/auth/cas3/callback.*
     name: MAAP GitLab
     id: 00001
     evaluationOrder: 1

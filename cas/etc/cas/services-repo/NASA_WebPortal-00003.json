@@ -1,6 +1,6 @@
 {
   @class: org.apereo.cas.services.RegexRegisteredService
-  serviceId: https://maap-project.org.*
+  serviceId: https://dit.maap-project.org.*
   name: MAAP NASA Web Portal
   id: 00003
   evaluationOrder: 3
@@ -49,7 +49,7 @@
     authorizedToReleaseAuthenticationAttributes: true
   }
 
-  logoutUrl: https://maap-project.org/wp-login.php?action=logout
+  logoutUrl: https://dit.maap-project.org/wp-login.php?action=logout
   accessStrategy:
   {
     @class: org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy
