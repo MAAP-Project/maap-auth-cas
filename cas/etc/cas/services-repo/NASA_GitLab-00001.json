@@ -1,6 +1,6 @@
 {
-    @class: org.apereo.cas.services.RegexRegisteredService
-    serviceId: https://repo.dit.maap-project.org/users/auth/cas3/callback.*
+    @class: org.apereo.cas.services.OidcRegisteredService
+    serviceId: https://repo.dit.maap-project.org/users/auth/openid_connect/callback.*
     name: MAAP GitLab
     id: 00001
     evaluationOrder: 1
@@ -60,4 +60,16 @@
       requireAllAttributes: true
       caseInsensitive: false
     }
+    clientSecret: gitlabClientSecret
+    clientId: gitlabClientId
+    bypassApprovalPrompt: true
+    scopes:
+    [
+      java.util.HashSet
+      [
+        openid
+        profile
+        email
+      ]
+    ]
   }
