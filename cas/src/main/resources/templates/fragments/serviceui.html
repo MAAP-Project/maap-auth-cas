@@ -11,38 +11,7 @@
 <body>
 <main role="main" class="container mt-3 mb-3">
 <div th:fragment="serviceUI" th:if="${registeredService}" id="serviceui">
-    <div th:if="${serviceUIMetadata}">
-        <table>
-            <tr>
-                <td style="text-align: left">
-                    <img th:if="${serviceUIMetadata.logoUrl}"
-                         th:title="${serviceUIMetadata.displayName}"
-                         th:alt="${serviceUIMetadata.displayName}"
-                         th:src="${serviceUIMetadata.logoUrl}"
-                         th:width="${serviceUIMetadata.logoWidth}"
-                         th:height="${serviceUIMetadata.logoHeight}"/>
-
-                    <img th:unless="${serviceUIMetadata.logoUrl}"
-                         th:title="${serviceUIMetadata.displayName}"
-                         th:alt="${serviceUIMetadata.displayName}"
-                         th:src="@{images/webapp.png}"
-                         th:width="${serviceUIMetadata.logoWidth}"
-                         th:height="${serviceUIMetadata.logoHeight}"/>
-                </td>
-            </tr>
-            <tr>
-                <td id="servicedesc">
-                    <h2 th:text="${serviceUIMetadata.displayName}">serviceUIMetadata.displayName</h2>
-                    <p th:text="${serviceUIMetadata.description}">serviceUIMetadata.description</p>
-
-                    <p th:if="${serviceUIMetadata.informationURL}" th:utext="#{screen.mdui.infolink.text(${serviceUIMetadata.informationURL})}">screen.mdui.infolink.text</p>
-                    <p th:if="${serviceUIMetadata.privacyStatementURL}" th:utext="#{screen.mdui.privacylink.text(${serviceUIMetadata.privacyStatementURL})}">serviceUIMetadata.privacyStatementURL</p>
-                </td>
-            </tr>
-       </table>
-    </div>
-
-    <div th:unless="${serviceUIMetadata}">
+    <div>
         <div style="margin-top: 20px;">
             <div>to continue to the <th:block th:text="${registeredService.name}">registeredService.name</th:block></div>
             <div class="privacy-caption" th:text="${registeredService.description}">registeredService.description</div>
